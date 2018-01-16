@@ -7,6 +7,7 @@ export interface CriteriaTableControllerContext {
     getCurrentVisibleData: (id: string) => Array<TableColumn>;
     getColumn: (id: string, nodeId: string) => TableColumn;
     getCurrentData: (id: string) => TableColumnRepository;
+    onError: (message: string) => void;
     saveData: (id: string) => void;
 }
 
@@ -15,5 +16,6 @@ export const CriteriaTableControllerContextTypes: {[P in keyof CriteriaTableCont
     getCurrentData: PropTypes.func.isRequired,
     getColumn: PropTypes.func.isRequired,
     initData: PropTypes.func.isRequired,
-    saveData: PropTypes.func.isRequired
+    saveData: PropTypes.func.isRequired,
+    onError: PropTypes.func.isRequired
 };

@@ -26,6 +26,7 @@ export class CriteriaTableController extends React.Component<
     public getChildContext(): CriteriaTableControllerContext {
         return {
             saveData: this.saveData,
+            onError: this.handleError,            
             getColumn: this.getColumn,
             initData: this.getDefaultData,
             getCurrentData: this.getCurrentData,
@@ -44,17 +45,13 @@ export class CriteriaTableController extends React.Component<
         try {
             cachedData = JSON.parse(localStorage.getItem(this.getCacheKey(id)));
         } catch (error) {
-            if (this.props.onError instanceof Function) {
-                this.props.onError(error);
-            }
+           this.handleError(error);
         }
 
         try {
             this.instantiateData(cachedData, defaultData).forEach((item: TableColumn) => instanceData.add(item));
         } catch (error) {
-            if (this.props.onError instanceof Function) {
-                this.props.onError(error);
-            }
+            this.handleError(error);
         }
 
         this.state.tables.set(id, instanceData);
@@ -83,6 +80,12 @@ export class CriteriaTableController extends React.Component<
 
         this.forceUpdate();
     }
+
+    protected handleError = (message: string): void => {
+        if (this.props.onError instanceof Function) {
+            this.props.onError(message);
+        }
+    } 
 
     private getCacheKey(id: string): string {
         return `${id}${this.cacheSuffix}`;

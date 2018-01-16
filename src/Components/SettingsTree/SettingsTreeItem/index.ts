@@ -1,2 +1,2 @@
 export * from "./SettingsTreeItemProps";
-export * from "./SettingsTreeeItem";
+export * from "./SettingsTreeItem";
