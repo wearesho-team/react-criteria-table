@@ -2,7 +2,11 @@ import * as React from "react";
 import classNames from "classnames";
 import * as PropTypes from "prop-types";
 
-import { SettingsTreeViewProps, SettingsTreeViewPropTypes, SettingsTreeViewDefaultProps } from "./SettingsTreeViewProps";
+import {
+    SettingsTreeViewProps,
+    SettingsTreeViewPropTypes,
+    SettingsTreeViewDefaultProps
+} from "./SettingsTreeViewProps";
 import { CriteriaTableControllerContextTypes, CriteriaTableControllerContext } from "../../CriteriaTableController";
 import { TableColumnRepository, TableColumn } from "../../TableColumn";
 import { SettingsTreeItem } from "../SettingsTreeItem";

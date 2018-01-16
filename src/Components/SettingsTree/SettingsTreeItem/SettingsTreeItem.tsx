@@ -48,22 +48,21 @@ export class SettingsTreeItem extends React.Component<SettingsTreeItemProps, Set
     }
 
     protected get notEmptyNode(): JSX.Element {
+        const className = classNames(
+            "jqtree-toggler jqtree_common fa",
+            this.state.isOpen ? "fa-minus-circle" : "fa-plus-circle"
+        );
+
         return (
             <React.Fragment>
-                <i
-                    className={classNames(
-                        "jqtree-toggler jqtree_common fa",
-                        this.state.isOpen ? "fa-minus-circle" : "fa-plus-circle")
-                    }
-                    onClick={this.handleDropDownClick}
-                />
+                <i className={className} onClick={this.handleDropDownClick} />
                 <span className="jqtree-title jqtree_common jqtree-title-folder">
                     {this.header}
                 </span>
             </React.Fragment>
         );
     }
-    
+
     protected get emptyNode(): JSX.Element {
         return (
             <span className="jqtree-title jqtree_common">

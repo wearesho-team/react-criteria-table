@@ -13,6 +13,8 @@ export class CriteriaTableController extends React.Component<
     > {
     public static readonly contextTypes = CriteriaTableControllerContextTypes;
 
+    private readonly cacheSuffix = "-settings";
+
     constructor(props) {
         super(props);
 
@@ -21,12 +23,10 @@ export class CriteriaTableController extends React.Component<
         };
     }
 
-    private readonly cacheSuffix = "-settings";
-
     public getChildContext(): CriteriaTableControllerContext {
         return {
             saveData: this.saveData,
-            onError: this.handleError,            
+            onError: this.handleError,
             getColumn: this.getColumn,
             initData: this.getDefaultData,
             getCurrentData: this.getCurrentData,
@@ -45,7 +45,7 @@ export class CriteriaTableController extends React.Component<
         try {
             cachedData = JSON.parse(localStorage.getItem(this.getCacheKey(id)));
         } catch (error) {
-           this.handleError(error);
+            this.handleError(error);
         }
 
         try {
@@ -85,7 +85,7 @@ export class CriteriaTableController extends React.Component<
         if (this.props.onError instanceof Function) {
             this.props.onError(message);
         }
-    } 
+    }
 
     private getCacheKey(id: string): string {
         return `${id}${this.cacheSuffix}`;

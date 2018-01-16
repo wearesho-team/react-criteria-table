@@ -88,7 +88,7 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
         });
     }
 
-    protected handleFilterChange = (column: any[]): void => {
+    protected handleFilterChange = (column: Array<any>): void => {
         this.setState({
             queries: column.length
                 ? column.map(({ id, value }) => ["=", id, value]) as Array<Condition>
