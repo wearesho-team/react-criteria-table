@@ -1,9 +1,9 @@
 import {expect} from "chai";
 
-import {TableColumn, TableColumnRepository} from "../../src/Components/TableColumn"
-import {ColumnData} from "./helpers/ColumnData";
+import {TableColumn, TableColumnRepository} from "../../../src/Components/TableColumn"
+import {ColumnData} from "../helpers/ColumnData";
 
-describe("TableColumn", () => {
+describe("TableColumnRepository", () => {
 
     let instance: TableColumnRepository;
 

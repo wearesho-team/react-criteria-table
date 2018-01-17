@@ -102,16 +102,14 @@ export class TableColumn {
 
     public getVisibleColumns = (): Array<TableColumn> => this.columns || [];
 
-    public saveData = (): any => {
-        return JSON.stringify((() => {
-            const self = {...this as any};
+    public saveData = (): Partial<TableColumn> => {
+        const self = {...this as any};
 
-            self.columns = this.childColumnsArray.map((item) => JSON.parse(item.saveData()));
-            !self.columns.length && delete self.columns;
-            delete self.childColumnRepository;
+        self.columns = this.childColumnsArray.map((item) => item.saveData());
+        !self.columns.length && delete self.columns;
+        delete self.childColumnRepository;
 
-            return self;
-        })())
+        return self;
     }
 
     // merge new data with current data

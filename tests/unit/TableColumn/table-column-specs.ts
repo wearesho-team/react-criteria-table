@@ -1,7 +1,7 @@
 import {expect} from "chai";
 
-import {TableColumn} from "../../src/Components/TableColumn"
-import {ColumnData} from "./helpers/ColumnData";
+import {TableColumn} from "../../../src/Components/TableColumn"
+import {ColumnData} from "../helpers/ColumnData";
 
 describe("TableColumn", () => {
     let instance: TableColumn;
@@ -42,7 +42,7 @@ describe("TableColumn", () => {
     });
 
     it("Should return stringified TableColumn data", () => {
-        expect(instance.saveData()).to.be.equal(JSON.stringify(ColumnData));
+        expect(JSON.stringify(instance.saveData())).to.be.equal(JSON.stringify(ColumnData));
     });
 
     it("Should should merge new data to current data (subtract)", () => {
