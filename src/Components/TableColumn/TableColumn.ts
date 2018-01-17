@@ -35,7 +35,7 @@ export class TableColumn {
     public show: boolean;
     public setParentState: (newState: boolean) => void; // callback for `updateStateFromChild`
 
-    private childColumnRepository?: TableColumnRepository; // all columns
+    public childColumnRepository?: TableColumnRepository; // all columns
     private columns?: Array<TableColumn>; // array for table - only visible columns
 
     constructor(props: Partial<TableColumn>) {

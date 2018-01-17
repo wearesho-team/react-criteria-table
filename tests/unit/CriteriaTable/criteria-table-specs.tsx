@@ -2,7 +2,6 @@ import * as React from "react";
 import {expect} from "chai";
 import {ReactWrapper, mount} from "enzyme";
 import {CriteriaTable} from "../../../src/Components/CriteriaTable";
-import {ColumnData} from "../helpers/ColumnData";
 
 describe("<CriteriaTable/>", () => {
     let wrapper: ReactWrapper<any, any>;
@@ -15,26 +14,28 @@ describe("<CriteriaTable/>", () => {
                 count: 1,
             }
         }
+    };
+
+    const commonHandler = () => undefined;
+
+    const context = {
+        initData: commonHandler,
+        getCurrentVisibleData: () => [],
+        getColumn: commonHandler,
+        getCurrentData: commonHandler,
+        onError: commonHandler,
+        saveData: commonHandler
     }
 
     beforeEach(() => {
         (window as any).localStorage = {
             getItem: () => JSON.stringify([]),
-            setItem: () => undefined
+            setItem: commonHandler
         };
 
         wrapper = mount(
             <CriteriaTable onDefaults={handleDefaults} onFetchData={handleFetchData} cacheKey="key"/>,
-            {
-                context: {
-                    initData: () => undefined,
-                    getCurrentVisibleData: () => [],
-                    getColumn: () => undefined,
-                    getCurrentData: () => undefined,
-                    onError: () => undefined,
-                    saveData: () => undefined
-                }
-            }
+            { context }
         );
     });
 
