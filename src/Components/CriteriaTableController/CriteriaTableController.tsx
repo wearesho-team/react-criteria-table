@@ -95,8 +95,8 @@ export class CriteriaTableController extends React.Component<
         cachedData: Array<IdentifiableTableColumn>,
         defaultData: Array<IdentifiableTableColumn>): Array<TableColumn> => (
             cachedData.map((item: TableColumn) => {
-                const substractedData = defaultData.find(({ id }) => id === item.id);
-                return substractedData && item.substractData(substractedData);
+                const subtractedData = defaultData.find(({ id }) => id === item.id);
+                return subtractedData && item.subtractData(subtractedData);
             })
         );
 
