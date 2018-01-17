@@ -1,9 +1,9 @@
 import * as PropTypes from "prop-types";
 
-import { IdentifiableTableColumn, TableColumnRepository, TableColumn } from "../TableColumn";
+import { TableColumnRepository, TableColumn } from "../TableColumn";
 
 export interface CriteriaTableControllerContext {
-    initData: (id: string, data: Array<IdentifiableTableColumn>) => TableColumnRepository;
+    initData: (id: string, data: Array<Partial<TableColumn>>) => TableColumnRepository;
     getCurrentVisibleData: (id: string) => Array<TableColumn>;
     getColumn: (id: string, nodeId: string) => TableColumn;
     getCurrentData: (id: string) => TableColumnRepository;

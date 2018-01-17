@@ -1,5 +1,5 @@
-import { findDOMNode } from "react-dom";
-import { DragSource, DropTarget } from "react-dnd";
+import {findDOMNode} from "react-dom";
+import {DragSource, DropTarget} from "react-dnd";
 
 const TYPE = "tree-item";
 
@@ -36,5 +36,9 @@ const dropTargetConnect = (connect, monitor) => ({
     connectDropTarget: connect.dropTarget()
 });
 
-export const DropTargetItem = () => DropTarget(TYPE, { hover, drop }, dropTargetConnect);
-export const DragSourceItem = () => DragSource(TYPE, { beginDrag }, dragSourceConnect);
+export const DropTargetItem = process.env.NODE_ENV === "production"
+    ? () => DropTarget(TYPE, {hover, drop}, dropTargetConnect)
+    : () => () => undefined;
+export const DragSourceItem = process.env.NODE_ENV === "production"
+    ? () => DragSource(TYPE, {beginDrag}, dragSourceConnect)
+    : () => () => undefined;

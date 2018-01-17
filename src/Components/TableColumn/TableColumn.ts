@@ -1,15 +1,41 @@
-import { Column as ReactTableColumn } from "react-table";
-import { TableColumnRepository } from "./TableColumnRepository";
-
-export type IdentifiableTableColumn = Partial<TableColumn & ReactTableColumn>;
+import {TableColumnRepository} from "./TableColumnRepository";
 
 export class TableColumn {
+    // ReactTableColumn attributes
+    // https://react-table.js.org/#/story/readme
+    public getHeaderProps?: (state: any, rowInfo: any, column: any, instance: any) => void;
+    public getFooterProps?: (state: any, rowInfo: any, column: any, instance: any) => void;
+    public filterMethod?: (filter: any, row: any, column: any) => boolean | void;
+    public Aggregated?: JSX.Element | string | ((args?: any) => JSX.Element);
+    public PivotValue?: JSX.Element | string | ((args?: any) => JSX.Element);
+    public Expander?: JSX.Element | string | ((args?: any) => JSX.Element);
+    public Header?: JSX.Element | string | ((args?: any) => JSX.Element);
+    public Footer?: JSX.Element | string | ((args?: any) => JSX.Element);
+    public Pivot?: JSX.Element | string | ((args?: any) => JSX.Element);
+    public Cell?: JSX.Element | string | ((args?: any) => JSX.Element);
+    public Filter?: JSX.Element | ((args?: any) => JSX.Element);
+    public headerStyle?: CSSStyleDeclaration;
+    public footerStyle?: CSSStyleDeclaration;
+    public style?: CSSStyleDeclaration;
+    public footerClassName?: string;
+    public headerClassName?: string;
+    public filterable?: boolean;
+    public resizable?: boolean;
+    public filterAll?: boolean;
+    public sortable?: boolean;
+    public expander?: boolean;
+    public className?: string;
+    public accessor?: string;
+    public minWidth?: number;
+    public maxWidth?: number;
+    public pivot?: boolean;
+    public width?: number;
+
     public id: string;
-    public state: boolean;
-    public Header: (() => JSX.Element) | string;
+    public show: boolean;
     public setParentState: (newState: boolean) => void; // callback for `updateStateFromChild`
 
-    private childColumnRepository?: TableColumnRepository; // all columns
+    public childColumnRepository?: TableColumnRepository; // all columns
     private columns?: Array<TableColumn>; // array for table - only visible columns
 
     constructor(props: Partial<TableColumn>) {
@@ -26,7 +52,7 @@ export class TableColumn {
                 }));
             });
 
-            this.updateVisibles();
+            this.updateVisible();
         }
     }
 
@@ -36,16 +62,12 @@ export class TableColumn {
             : [];
     }
 
-    public get childColumnsRepository(): TableColumnRepository {
-        return this.childColumnRepository;
-    }
-
     // updating state according to visible child columns
     public updateStateFromChild = (newState: boolean): void => {
-        this.updateVisibles();
+        this.updateVisible();
 
-        if (this.state && (!this.columns || !this.columns.length)) {
-            this.state = false;
+        if (this.show && (!this.columns || !this.columns.length)) {
+            this.show = false;
             return;
         }
 
@@ -53,14 +75,14 @@ export class TableColumn {
             return;
         }
 
-        if (this.state !== newState) {
-            this.state = newState;
+        if (this.show !== newState) {
+            this.show = newState;
         }
     }
 
-    // updating self, parent and childs state
+    // updating self, parent and children state
     public setState = (newState: boolean): TableColumn => {
-        this.state = newState;
+        this.show = newState;
 
         if (this.setParentState instanceof Function) {
             this.setParentState(newState);
@@ -71,19 +93,20 @@ export class TableColumn {
         return this;
     }
 
-    public updateVisibles = (): TableColumn => {
-        const visibles = this.visibleColumns || [];
-        this.columns = visibles.length ? visibles : undefined;
+    public updateVisible = (): TableColumn => {
+        const visible = this.visibleColumns || [];
+        this.columns = visible.length ? visible : undefined;
 
         return this;
     }
 
-    public saveData = (): TableColumn => {
-        const self = { ...this as any };
+    public getVisibleColumns = (): Array<TableColumn> => this.columns || [];
 
-        self.columns = this.childColumnsArray;
-        self.columns.forEach((item) => item.saveData());
+    public saveData = (): Partial<TableColumn> => {
+        const self = {...this as any};
 
+        self.columns = this.childColumnsArray.map((item) => item.saveData());
+        !self.columns.length && delete self.columns;
         delete self.childColumnRepository;
 
         return self;
@@ -91,17 +114,17 @@ export class TableColumn {
 
     // merge new data with current data
     // if key in new data exist in current data - ignore it
-    public substractData = (data: IdentifiableColumn): TableColumn => {
+    public subtractData = (data: Partial<TableColumn>): TableColumn => {
         const attributes = Object.keys(this);
 
         Object.keys(data)
             .filter((key) => !attributes.includes(key))
             .forEach((key) => this[key] = data[key]);
 
-        if (data.childColumnsArray && data.childColumnsArray.length) {
+        if ((data as any).columns && (data as any).columns.length) {
             this.childColumnsArray.forEach((item: TableColumn) => {
-                const substractItem = data.childColumnsArray.find(({ id }) => id === item.id);
-                substractItem && item.substractData(substractItem);
+                const subtractItem = (data as any).columns.find(({id}) => id === item.id);
+                subtractItem && item.subtractData(subtractItem);
             });
         }
 
@@ -109,13 +132,13 @@ export class TableColumn {
     }
 
     public getChildColumnById = (childId: string): TableColumn => {
-        return this.childColumnsRepository
-            ? this.childColumnsRepository.findById(childId)
+        return this.childColumnRepository
+            ? this.childColumnRepository.findById(childId)
             : undefined;
     }
 
     private get visibleColumns(): Array<TableColumn> | undefined {
-        return this.state
+        return this.show
             ? this.childColumnsArray.map((item: TableColumn) => {
                 const visibleColumns = item.visibleColumns;
                 if (visibleColumns) {

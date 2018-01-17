@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { CriteriaTableControllerContextTypes, CriteriaTableControllerContext } from "./CriteriaTableControllerContext";
-import { TableColumnRepository, IdentifiableTableColumn, TableColumn } from "../TableColumn";
+import { TableColumnRepository, TableColumn } from "../TableColumn";
 import { CriteriaTableControllerProps } from "./CriteriaTableControllerProps";
 
 export interface CriteriaTableControllerState {
@@ -11,7 +11,7 @@ export interface CriteriaTableControllerState {
 export class CriteriaTableController extends React.Component<
     CriteriaTableControllerProps, CriteriaTableControllerState
     > {
-    public static readonly contextTypes = CriteriaTableControllerContextTypes;
+    public static readonly childContextTypes = CriteriaTableControllerContextTypes;
 
     private readonly cacheSuffix = "-settings";
 
@@ -38,12 +38,12 @@ export class CriteriaTableController extends React.Component<
         return this.props.children;
     }
 
-    protected getDefaultData = (id: string, defaultData: Array<IdentifiableTableColumn>): TableColumnRepository => {
-        let cachedData: Array<IdentifiableTableColumn>;
+    protected getDefaultData = (id: string, defaultData: Array<Partial<TableColumn>>): TableColumnRepository => {
+        let cachedData: Array<Partial<TableColumn>>;
         const instanceData = new TableColumnRepository();
 
         try {
-            cachedData = JSON.parse(localStorage.getItem(this.getCacheKey(id)));
+            cachedData = JSON.parse(window.localStorage.getItem(this.getCacheKey(id)));
         } catch (error) {
             this.handleError(error);
         }
@@ -65,15 +65,15 @@ export class CriteriaTableController extends React.Component<
     }
 
     protected getCurrentVisibleData = (id: string): Array<TableColumn> => {
-        return this.getCurrentData(id).arrayList.filter((item: TableColumn) => item.updateVisibles().state);
+        return this.getCurrentData(id).arrayList.filter((item: TableColumn) => item.updateVisible().show);
     }
 
     protected getColumn = (id: string, nodeId: string): TableColumn => {
-        return this.getCurrentData(id).arrayList.find((item: TableColumn) => id === nodeId);
+        return this.getCurrentData(id).findById(nodeId);
     }
 
     protected saveData = (id: string): void => {
-        localStorage.setItem(
+        window.localStorage.setItem(
             this.getCacheKey(id),
             JSON.stringify(this.getCurrentData(id).arrayList.map((item: TableColumn) => item.saveData()))
         );
@@ -92,22 +92,22 @@ export class CriteriaTableController extends React.Component<
     }
 
     private mergeData = (
-        cachedData: Array<IdentifiableTableColumn>,
-        defaultData: Array<IdentifiableTableColumn>): Array<TableColumn> => (
+        cachedData: Array<Partial<TableColumn>>,
+        defaultData: Array<Partial<TableColumn>>): Array<TableColumn> => (
             cachedData.map((item: TableColumn) => {
-                const substractedData = defaultData.find(({ id }) => id === item.id);
-                return substractedData && item.substractData(substractedData);
+                const subtractedData = defaultData.find(({ id }) => id === item.id);
+                return subtractedData && item.subtractData(subtractedData);
             })
         );
 
     private instantiateData = (
-        cachedData: Array<IdentifiableTableColumn>,
-        defaultData: Array<IdentifiableTableColumn>): Array<TableColumn> => (
+        cachedData: Array<Partial<TableColumn>>,
+        defaultData: Array<Partial<TableColumn>>): Array<TableColumn> => (
             (!cachedData || !cachedData.length)
-                ? defaultData.map((item: IdentifiableTableColumn) => new TableColumn(item))
+                ? defaultData.map((item: Partial<TableColumn>) => new TableColumn(item))
                 : this.mergeData(
-                    cachedData.map((item: IdentifiableTableColumn) => new TableColumn(item)),
-                    defaultData.map((item: IdentifiableTableColumn) => new TableColumn(item))
+                    cachedData.map((item: Partial<TableColumn>) => new TableColumn(item)),
+                    defaultData.map((item: Partial<TableColumn>) => new TableColumn(item))
                 )
         );
 }

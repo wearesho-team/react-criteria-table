@@ -1,5 +1,5 @@
 import * as React from "react";
-import classNames from "classnames";
+import * as classNames from "classnames";
 import * as PropTypes from "prop-types";
 
 import { SettingsTreeItemProps, SettingsTreeItemPropTypes } from "./SettingsTreeItemProps";
@@ -15,8 +15,17 @@ export interface SettingsTreeItemState {
 export class SettingsTreeItem extends React.Component<SettingsTreeItemProps, SettingsTreeItemState> {
     public static readonly propTypes = SettingsTreeItemPropTypes;
 
+    public constructor(props) {
+        super(props);
+
+        this.state = {
+            isOpen: false
+        }
+    }
+
     public render(): JSX.Element {
-        const { connectDragSource, connectDropTarget } = this.props;
+        const connectDragSource = this.props.connectDragSource || ((e) => e);
+        const connectDropTarget = this.props.connectDropTarget || ((e) => e);
 
         return connectDropTarget(connectDragSource(
             <div data-id={this.props.groupId}>
@@ -26,7 +35,7 @@ export class SettingsTreeItem extends React.Component<SettingsTreeItemProps, Set
                         <input
                             type="checkbox"
                             className="toggle-switch__checkbox"
-                            checked={!this.props.columnData.state}
+                            checked={!this.props.columnData.show}
                             onChange={this.handleSwitcherClick}
                         />
                         <i className="toggle-switch__helper" />
@@ -65,7 +74,7 @@ export class SettingsTreeItem extends React.Component<SettingsTreeItemProps, Set
 
     protected get emptyNode(): JSX.Element {
         return (
-            <span className="jqtree-title jqtree_common">
+            <span className="jqtree-title jqtree_common single">
                 {this.header}
             </span>
         );
@@ -78,7 +87,7 @@ export class SettingsTreeItem extends React.Component<SettingsTreeItemProps, Set
 
         return (
             <SettingsTreeView
-                childList={this.props.columnData.childColumnsRepository}
+                childList={this.props.columnData.childColumnRepository}
                 activeTableKey={this.props.activeTableKey}
                 className="jqtree_common"
             />
@@ -86,11 +95,11 @@ export class SettingsTreeItem extends React.Component<SettingsTreeItemProps, Set
     }
 
     protected handleSwitcherClick = (): void => {
-        this.props.columnData.setState(!this.props.columnData.state);
+        this.props.columnData.setState(!this.props.columnData.show);
         this.props.onSaveData();
     }
 
-    protected handleDropDownClick = () => {
+    protected handleDropDownClick = (): void => {
         this.setState(({ isOpen }) => ({
             isOpen: !isOpen
         }));
