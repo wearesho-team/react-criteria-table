@@ -1,6 +1,7 @@
 import {expect} from "chai";
 
 import {TableColumn} from "../../src/Components/TableColumn"
+import {ColumnData} from "./helpers/ColumnData";
 
 describe("TableColumn", () => {
     let instance: TableColumn;
@@ -16,40 +17,8 @@ describe("TableColumn", () => {
         })
     }
 
-    const data = {
-        id: "id_1",
-        show: true,
-        Header: "Header",
-        columns: [
-            {
-                id: "id_2",
-                show: false,
-                Header: "Child header",
-                columns: [
-                    {
-                        id: "id_3",
-                        show: true,
-                        Header: "Super child header"
-                    }
-                ]
-            },
-            {
-                id: "id_2_1",
-                show: true,
-                Header: "Child header 2",
-                columns: [
-                    {
-                        id: "id_3_1",
-                        show: false,
-                        Header: "Super child header 2"
-                    }
-                ]
-            }
-        ]
-    };
-
     beforeEach(() => {
-        instance = new TableColumn(data);
+        instance = new TableColumn(ColumnData);
     });
 
     afterEach(() => {
@@ -57,14 +26,14 @@ describe("TableColumn", () => {
     });
 
     it("Should initialize data on create", () => {
-        expect(instance.id).to.equal(data.id);
-        expect(instance.show).to.equal(data.show);
-        expect(instance.Header).to.equal(data.Header);
+        expect(instance.id).to.equal(ColumnData.id);
+        expect(instance.show).to.equal(ColumnData.show);
+        expect(instance.Header).to.equal(ColumnData.Header);
 
         // child column
         expect(instance.getChildColumnById("id_2")).to.be.instanceof(TableColumn);
-        expect(instance.getChildColumnById("id_2").show).to.equal(data.columns[0].show);
-        expect(instance.getChildColumnById("id_2").Header).to.equal(data.columns[0].Header);
+        expect(instance.getChildColumnById("id_2").show).to.equal(ColumnData.columns[0].show);
+        expect(instance.getChildColumnById("id_2").Header).to.equal(ColumnData.columns[0].Header);
     });
 
     it("Should determine visible columns according to state on create", () => {
@@ -73,7 +42,7 @@ describe("TableColumn", () => {
     });
 
     it("Should return stringified TableColumn data", () => {
-        expect(instance.saveData()).to.be.equal(JSON.stringify(data));
+        expect(instance.saveData()).to.be.equal(JSON.stringify(ColumnData));
     });
 
     it("Should should merge new data to current data (subtract)", () => {
