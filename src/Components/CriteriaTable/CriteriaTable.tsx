@@ -80,7 +80,7 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
 
         const response = await this.props.onFetchData(fetchState);
 
-        localStorage.setItem(this.props.cacheKey, JSON.stringify({ data: response.data }));
+        window.localStorage.setItem(this.props.cacheKey, JSON.stringify({ data: response.data }));
         this.setState({
             data: response.data,
             cancelToken: undefined,
@@ -97,7 +97,7 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
     }
 
     protected get cachedState(): CriteriaTableState {
-        const cached = JSON.parse(localStorage.getItem(this.props.cacheKey));
+        const cached = JSON.parse(window.localStorage.getItem(this.props.cacheKey));
 
         if (cached && ("data" in cached)) {
             return cached;

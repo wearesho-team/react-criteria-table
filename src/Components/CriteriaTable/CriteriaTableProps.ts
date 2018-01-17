@@ -1,10 +1,10 @@
 import * as PropTypes from "prop-types";
 
 import { CriteriaTableState, FetchState } from "./CriteriaTable";
-import { IdentifiableTableColumn } from "../TableColumn";
+import {TableColumn} from "../TableColumn";
 
 export interface CriteriaTableProps {
-    onDefaults: (state: CriteriaTableState) => () => Array<IdentifiableTableColumn>;
+    onDefaults: (state: CriteriaTableState) => () => Array<Partial<TableColumn>>;
     onFetchData: (state: FetchState) => Promise<CriteriaTableState>;
     cacheKey: string;
 }

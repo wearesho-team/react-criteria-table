@@ -1,10 +1,7 @@
 import * as React from "react";
 import {expect} from "chai";
 import {ReactWrapper, mount} from "enzyme";
-import {
-    CriteriaTableController,
-    CriteriaTableControllerContextTypes
-} from "../../../src/Components/CriteriaTableController";
+import {CriteriaTableController} from "../../../src/Components/CriteriaTableController";
 import {ColumnData} from "../helpers/ColumnData";
 import {TableColumnRepository} from "../../../src/Components/TableColumn/TableColumnRepository";
 
@@ -26,6 +23,7 @@ describe("CriteriaTableController", () => {
     })
 
     afterEach(() => {
+        wrapper.unmount();
         onErrorMessage = undefined;
         (window as any).localStorage = {
             getItem: () => "[]",
