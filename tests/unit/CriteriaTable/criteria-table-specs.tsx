@@ -1,7 +1,8 @@
+import { expect } from "chai";
 import * as React from "react";
-import {expect} from "chai";
-import {ReactWrapper, mount} from "enzyme";
-import {CriteriaTable} from "../../../src/Components/CriteriaTable";
+import { ReactWrapper, mount } from "enzyme";
+
+import { CriteriaTable } from "../../../src/Components/CriteriaTable";
 
 describe("<CriteriaTable/>", () => {
     let wrapper: ReactWrapper<any, any>;
@@ -34,7 +35,7 @@ describe("<CriteriaTable/>", () => {
         };
 
         wrapper = mount(
-            <CriteriaTable onDefaults={handleDefaults} onFetchData={handleFetchData} cacheKey="key"/>,
+            <CriteriaTable onDefaults={handleDefaults} onFetchData={handleFetchData} cacheKey="key" />,
             { context }
         );
     });
@@ -47,11 +48,11 @@ describe("<CriteriaTable/>", () => {
         expect(JSON.stringify(wrapper.state().data.list)).to.equal("[]");
         expect(JSON.stringify(wrapper.state().data.total)).to.equal("{}");
         expect(wrapper.state().data.count).to.equal(0);
-    })
+    });
 
     it("Should set data to state from localStorage on mount", () => {
         Object.assign((window as any).localStorage, {
-            getItem: () => JSON.stringify({data: { list: ["list"], total: "total", count: 1 }})
+            getItem: () => JSON.stringify({ data: { list: ["list"], total: "total", count: 1 } })
         });
 
         wrapper.unmount().mount();
@@ -69,6 +70,7 @@ describe("<CriteriaTable/>", () => {
             }
         });
 
+        // tslint:disable-next-line
         await wrapper.unmount().mount();
 
         expect(savedData).to.equal(JSON.stringify({
@@ -82,11 +84,10 @@ describe("<CriteriaTable/>", () => {
             value: "wow",
             count: 1,
         }));
-    })
+    });
 
     it("Should set query to state on handleFilterChange according to passed data", () => {
-        (wrapper.instance() as any).handleFilterChange([{id: "field", value: 1}]);
+        (wrapper.instance() as any).handleFilterChange([{ id: "field", value: 1 }]);
         expect(JSON.stringify(wrapper.state().queries)).to.equal(JSON.stringify([["=", "field", 1]]))
-    })
-
-})
+    });
+});

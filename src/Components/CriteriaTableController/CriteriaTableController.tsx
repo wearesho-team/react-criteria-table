@@ -1,8 +1,9 @@
 import * as React from "react";
+import * as PropTypes from "prop-types";
 
 import { CriteriaTableControllerContextTypes, CriteriaTableControllerContext } from "./CriteriaTableControllerContext";
-import { TableColumnRepository, TableColumn } from "../TableColumn";
 import { CriteriaTableControllerProps } from "./CriteriaTableControllerProps";
+import { TableColumnRepository, TableColumn } from "../TableColumn";
 
 export interface CriteriaTableControllerState {
     tables: Map<string, TableColumnRepository>;
@@ -81,9 +82,11 @@ export class CriteriaTableController extends React.Component<
         this.forceUpdate();
     }
 
-    protected handleError = (message: string): void => {
+    protected handleError = (error: any): void => {
         if (this.props.onError instanceof Function) {
-            this.props.onError(message);
+            this.props.onError(error);
+        } else {
+            throw error;
         }
     }
 

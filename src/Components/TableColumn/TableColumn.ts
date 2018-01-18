@@ -1,4 +1,4 @@
-import {TableColumnRepository} from "./TableColumnRepository";
+import { TableColumnRepository } from "./TableColumnRepository";
 
 export class TableColumn {
     // ReactTableColumn attributes
@@ -103,7 +103,7 @@ export class TableColumn {
     public getVisibleColumns = (): Array<TableColumn> => this.columns || [];
 
     public saveData = (): Partial<TableColumn> => {
-        const self = {...this as any};
+        const self = { ...this as any };
 
         self.columns = this.childColumnsArray.map((item) => item.saveData());
         !self.columns.length && delete self.columns;
@@ -113,7 +113,7 @@ export class TableColumn {
     }
 
     // merge new data with current data
-    // if key in new data exist in current data - ignore it
+    // if key in new data is exist in current data - ignore it
     public subtractData = (data: Partial<TableColumn>): TableColumn => {
         const attributes = Object.keys(this);
 
@@ -123,7 +123,7 @@ export class TableColumn {
 
         if ((data as any).columns && (data as any).columns.length) {
             this.childColumnsArray.forEach((item: TableColumn) => {
-                const subtractItem = (data as any).columns.find(({id}) => id === item.id);
+                const subtractItem = (data as any).columns.find(({ id }) => id === item.id);
                 subtractItem && item.subtractData(subtractItem);
             });
         }

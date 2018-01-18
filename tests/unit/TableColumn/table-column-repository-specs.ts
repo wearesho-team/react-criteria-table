@@ -1,10 +1,9 @@
-import {expect} from "chai";
+import { expect } from "chai";
 
-import {TableColumn, TableColumnRepository} from "../../../src/Components/TableColumn"
-import {ColumnData} from "../helpers/ColumnData";
+import { TableColumn, TableColumnRepository } from "../../../src/Components/TableColumn"
+import { ColumnData } from "../helpers/ColumnData";
 
 describe("TableColumnRepository", () => {
-
     let instance: TableColumnRepository;
 
     beforeEach(() => {
@@ -13,7 +12,7 @@ describe("TableColumnRepository", () => {
 
     afterEach(() => {
         instance = undefined;
-    })
+    });
 
     it("Should add data to repository", () => {
         instance.add(new TableColumn(ColumnData));
@@ -26,7 +25,7 @@ describe("TableColumnRepository", () => {
         instance.add(new TableColumn(ColumnData));
 
         expect(() => instance.add(new TableColumn(ColumnData))).to.throw("Id already exists")
-    })
+    });
 
     it("Should throw error if id not found in repo on move", () => {
         expect(() => instance.move("notId", "itsNotIdToo")).to.throw("Id not found");
@@ -40,12 +39,13 @@ describe("TableColumnRepository", () => {
                 show: true,
                 Header: `Header_${i}`
             })));
-        instance.move("id_0", "id_3");
-        expect(instance.arrayList.findIndex(({id}) => id === "id_0")).to.equal(3);
-        expect(instance.arrayList.findIndex(({id}) => id === "id_3")).to.equal(2);
 
         instance.move("id_0", "id_3");
-        expect(instance.arrayList.findIndex(({id}) => id === "id_0")).to.equal(2);
-        expect(instance.arrayList.findIndex(({id}) => id === "id_3")).to.equal(3);
-    })
-})
+        expect(instance.arrayList.findIndex(({ id }) => id === "id_0")).to.equal(3);
+        expect(instance.arrayList.findIndex(({ id }) => id === "id_3")).to.equal(2);
+
+        instance.move("id_0", "id_3");
+        expect(instance.arrayList.findIndex(({ id }) => id === "id_0")).to.equal(2);
+        expect(instance.arrayList.findIndex(({ id }) => id === "id_3")).to.equal(3);
+    });
+});

@@ -1,12 +1,12 @@
+import { expect } from "chai";
 import * as React from "react";
-import {expect} from "chai";
-import {ReactWrapper, mount} from "enzyme";
-import {CriteriaTableSettings} from "../../../src/Components/CriteriaTableSettings/CriteriaTableSettings";
-import {CriteriaTableControllerContextTypes} from "../../../src/Components/CriteriaTableController/CriteriaTableControllerContext";
-import {SettingsTreeView} from "../../../src/Components/SettingsTree/SettingsTreeView/SettingsTreeView";
-import {ColumnData} from "../helpers/ColumnData";
-import {TableColumn} from "../../../src/Components/TableColumn/TableColumn";
-import {TableColumnRepository} from "../../../src/Components/TableColumn/TableColumnRepository";
+import { ReactWrapper, mount } from "enzyme";
+
+import { ColumnData } from "../helpers/ColumnData";
+import { CriteriaTableSettings } from "../../../src/Components/CriteriaTableSettings";
+import { SettingsTreeView } from "../../../src/Components/SettingsTree/SettingsTreeView";
+import { TableColumn, TableColumnRepository } from "../../../src/Components/TableColumn";
+import { CriteriaTableControllerContextTypes } from "../../../src/Components/CriteriaTableController";
 
 describe("<CriteriaTableSettings/>", () => {
     let wrapper: ReactWrapper<any>;
@@ -24,24 +24,23 @@ describe("<CriteriaTableSettings/>", () => {
 
     beforeEach(() => {
         wrapper = mount(
-            <CriteriaTableSettings activeTableKey="key"/>,
-            {context, childContextTypes: CriteriaTableControllerContextTypes}
-            );
-    })
+            <CriteriaTableSettings activeTableKey="key" />,
+            { context, childContextTypes: CriteriaTableControllerContextTypes }
+        );
+    });
 
     afterEach(() => {
         wrapper.unmount();
-    })
+    });
 
     it("Should return null when `context.getCurrentData` return nothing", () => {
         expect(wrapper.find(SettingsTreeView).length).to.equal(0)
-    })
+    });
 
     it("Should return <SettingsTreeView/> when `context.getCurrentData` return correct data", () => {
         context.getCurrentData = () => new TableColumnRepository().add(new TableColumn(ColumnData));
         wrapper.unmount().mount();
 
-
         expect(wrapper.find(SettingsTreeView).length).to.equal(1)
-    })
-})
+    });
+});

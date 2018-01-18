@@ -1,6 +1,6 @@
 import * as React from "react";
-import * as classNames from "classnames";
 import * as PropTypes from "prop-types";
+import * as classNames from "classnames";
 
 import { SettingsTreeItemProps, SettingsTreeItemPropTypes } from "./SettingsTreeItemProps";
 import { DragSourceItem, DropTargetItem } from "../DnDSetup";

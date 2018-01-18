@@ -1,7 +1,7 @@
 import * as PropTypes from "prop-types";
 
 export interface CriteriaTableControllerProps {
-    onError?: (message: string) => void;
+    onError?: (error: any) => void;
     children: JSX.Element;
 }
 

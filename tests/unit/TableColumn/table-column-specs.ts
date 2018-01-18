@@ -1,7 +1,7 @@
-import {expect} from "chai";
+import { expect } from "chai";
 
-import {TableColumn} from "../../../src/Components/TableColumn"
-import {ColumnData} from "../helpers/ColumnData";
+import { TableColumn } from "../../../src/Components/TableColumn"
+import { ColumnData } from "../helpers/ColumnData";
 
 describe("TableColumn", () => {
     let instance: TableColumn;
@@ -14,7 +14,7 @@ describe("TableColumn", () => {
         column.childColumnsArray.forEach((child) => {
             expect(child.show === state).to.be.true;
             testState(child, state);
-        })
+        });
     }
 
     beforeEach(() => {
@@ -86,5 +86,5 @@ describe("TableColumn", () => {
         instance.getChildColumnById("id_2_1").setState(true);
 
         expect(instance.show).to.be.true;
-    })
-})
+    });
+});

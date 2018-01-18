@@ -1,26 +1,29 @@
+import { expect } from "chai";
 import * as React from "react";
-import {expect} from "chai";
-import {ReactWrapper, mount} from "enzyme";
-import {CriteriaTableController} from "../../../src/Components/CriteriaTableController";
-import {ColumnData} from "../helpers/ColumnData";
-import {TableColumnRepository} from "../../../src/Components/TableColumn/TableColumnRepository";
+import { ReactWrapper, mount } from "enzyme";
 
-describe("CriteriaTableController", () => {
+import { ColumnData } from "../helpers/ColumnData";
+import { TableColumnRepository } from "../../../src/Components/TableColumn";
+import { CriteriaTableController } from "../../../src/Components/CriteriaTableController";
+
+describe("<CriteriaTableController/>", () => {
     let wrapper: ReactWrapper<any, any>;
     let instance: CriteriaTableController;
 
     let onErrorMessage;
     const handleError = (error: any) => {
         onErrorMessage = error.message;
-    }
+    };
 
     beforeEach(() => {
-        wrapper = mount(<CriteriaTableController onError={handleError}>
-            <div/>
-        </CriteriaTableController>);
+        wrapper = mount(
+            <CriteriaTableController onError={handleError}>
+                <div />
+            </CriteriaTableController>
+        );
 
         instance = wrapper.instance() as CriteriaTableController;
-    })
+    });
 
     afterEach(() => {
         wrapper.unmount();
@@ -28,7 +31,7 @@ describe("CriteriaTableController", () => {
         (window as any).localStorage = {
             getItem: () => "[]",
         };
-    })
+    });
 
     it("Should initialize only default data when cached data empty", () => {
         const initializedData = instance.getChildContext().initData("notExistCacheKey", [ColumnData]);
@@ -86,16 +89,37 @@ describe("CriteriaTableController", () => {
         expect(onErrorMessage).to.equal("Id already exists");
     });
 
+    it("Should throw error on error if `props.onErorr` does not passed", () => {
+        (window as any).localStorage = {
+            getItem: () => "notValidJSONData"
+        };
+
+        wrapper = mount(
+            <CriteriaTableController>
+                <div />
+            </CriteriaTableController>
+        );
+
+        const errorWrapp = () => (wrapper.instance() as any).getChildContext().initData("someKey", [ColumnData]);
+
+        expect(errorWrapp).to.throw("Unexpected token o in JSON at position 1");
+    });
+
     it("Should return data according to id on `getCurrentData`", () => {
         instance.getChildContext().initData("someKey", [ColumnData]);
 
-        expect(instance.getChildContext().getCurrentData("someKey").findById("id_1").Header).to.equal(ColumnData.Header);
+        expect(
+            instance.getChildContext()
+                .getCurrentData("someKey")
+                .findById("id_1")
+                .Header
+        ).to.equal(ColumnData.Header);
     });
 
     it("Should return only data with `show` true according to id on `getCurrentVisibleData`", () => {
         instance.getChildContext().initData("someKey", [
-            {id: "hidden", show: false},
-            {id: "visible", show: true}
+            { id: "hidden", show: false },
+            { id: "visible", show: true }
         ]);
 
         expect(instance.getChildContext().getCurrentVisibleData("someKey").length).to.equal(1);
@@ -114,7 +138,7 @@ describe("CriteriaTableController", () => {
         let savedData;
         (window as any).localStorage = {
             setItem: (key, data) => {
-               savedData = data;
+                savedData = data;
             }
         }
 
@@ -122,4 +146,4 @@ describe("CriteriaTableController", () => {
 
         expect(savedData).to.equal(JSON.stringify([ColumnData]));
     });
-})
+});

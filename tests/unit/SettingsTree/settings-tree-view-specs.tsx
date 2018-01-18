@@ -1,10 +1,10 @@
+import { expect } from "chai";
 import * as React from "react";
-import {expect} from "chai";
-import {ReactWrapper, mount} from "enzyme";
-import {SettingsTreeView} from "../../../src/Components/SettingsTree/SettingsTreeView/SettingsTreeView";
-import {TableColumnRepository} from "../../../src/Components/TableColumn/TableColumnRepository";
-import {TableColumn} from "../../../src/Components/TableColumn/TableColumn";
-import {ColumnData} from "../helpers/ColumnData";
+import { ReactWrapper, mount } from "enzyme";
+
+import { SettingsTreeView } from "../../../src/Components/SettingsTree/SettingsTreeView";
+import { TableColumnRepository, TableColumn } from "../../../src/Components/TableColumn";
+import { ColumnData } from "../helpers/ColumnData";
 
 describe("<SettingsTreeView/>", () => {
     let wrapper: ReactWrapper<any>;
@@ -31,32 +31,30 @@ describe("<SettingsTreeView/>", () => {
     };
 
     beforeEach(() => {
-        wrapper = mount(<SettingsTreeView childList={repo} activeTableKey="key"/>, {context})
-    })
+        wrapper = mount(<SettingsTreeView childList={repo} activeTableKey="key" />, { context })
+    });
 
     afterEach(() => {
         saved = false;
         error = true;
         wrapper.unmount();
-    })
+    });
 
     it("Should call `context.saveData` on save data", () => {
         (wrapper.instance() as any).handleSaveData();
 
         expect(saved).to.be.true;
-    })
+    });
 
     it("Should call `context.saveData` on move", () => {
         (wrapper.instance() as any).handleMove(() => undefined)()
 
         expect(saved).to.be.true;
-    })
+    });
 
     it("Should call `context.onError` if error has been throwed on move", () => {
-        (wrapper.instance() as any).handleMove(() => {throw Error()})();
+        (wrapper.instance() as any).handleMove(() => { throw Error() })();
 
         expect(error).to.be.true;
-    })
-})
-
-
+    });
+});

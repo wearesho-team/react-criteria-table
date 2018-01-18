@@ -1,12 +1,12 @@
-import {findDOMNode} from "react-dom";
-import {DragSource, DropTarget} from "react-dnd";
+import { findDOMNode } from "react-dom";
+import { DragSource, DropTarget } from "react-dnd";
 
 const TYPE = "tree-item";
 
 const hover = (props, monitor, component) => {
     if (
-        monitor.getItem().dragGroupId !== props.groupId // controll drag in group container
-        || monitor.getItem().dragDataId === props.columnData.id // controll drag on itself
+        monitor.getItem().dragGroupId !== props.groupId // control drag in group container
+        || monitor.getItem().dragDataId === props.columnData.id // control drag on itself
     ) {
         return;
     }
@@ -36,9 +36,11 @@ const dropTargetConnect = (connect, monitor) => ({
     connectDropTarget: connect.dropTarget()
 });
 
-export const DropTargetItem = process.env.NODE_ENV === "production"
-    ? () => DropTarget(TYPE, {hover, drop}, dropTargetConnect)
-    : () => () => undefined;
-export const DragSourceItem = process.env.NODE_ENV === "production"
-    ? () => DragSource(TYPE, {beginDrag}, dragSourceConnect)
-    : () => () => undefined;
+const isDebug = process.env.NODE_ENV !== "production";
+
+export const DropTargetItem = !isDebug
+    ? () => DropTarget(TYPE, { hover, drop }, dropTargetConnect)
+    : () => undefined;
+export const DragSourceItem = !isDebug
+    ? () => DragSource(TYPE, { beginDrag }, dragSourceConnect)
+    : () => undefined;

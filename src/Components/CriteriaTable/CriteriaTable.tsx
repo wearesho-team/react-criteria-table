@@ -3,7 +3,8 @@ import ReactTable from "react-table";
 import * as PropTypes from "prop-types";
 import axios, { CancelTokenSource } from "axios";
 
-import { CriteriaTableProps, CriteriaTablePropTypes } from "./CriteriaTableProps";
+import { TableColumn } from "../TableColumn";
+import { CriteriaTableProps, CriteriaTablePropTypes, CriteriaTableDefautProps } from "./CriteriaTableProps";
 import { CriteriaTableControllerContextTypes, CriteriaTableControllerContext } from "../CriteriaTableController";
 
 export type ConditionType = "=" | "<>" | ">" | "<" | "!=" | ">=" | "<=" | "like" | "in";
@@ -30,19 +31,8 @@ export interface FetchState {
 
 export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaTableState> {
     public static readonly contextTypes = CriteriaTableControllerContextTypes;
+    public static readonly defaultProps = CriteriaTableDefautProps;
     public static readonly propTypes = CriteriaTablePropTypes;
-
-    public static get labels() {
-        return {
-            noDataText: "Записи не найдены",
-            loadingText: "Загрузка...",
-            previousText: "Назад",
-            pageText: "Страница",
-            nextText: "Вперед",
-            rowsText: "строк",
-            ofText: "из",
-        };
-    }
 
     public readonly context: CriteriaTableControllerContext;
 
@@ -118,7 +108,7 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
             filterable: true,
             manual: true, // Forces table not to paginate or sort automatically, so we can handle it server-side,
             ...{ pages: this.state.pages },
-            ...CriteriaTable.labels
+            ...this.props.labels
         };
     }
 }

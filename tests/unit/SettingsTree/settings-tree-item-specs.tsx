@@ -1,10 +1,11 @@
+import { expect } from "chai";
 import * as React from "react";
-import {expect} from "chai";
-import {ReactWrapper, mount} from "enzyme";
-import {SettingsTreeItem} from "../../../src/Components/SettingsTree/SettingsTreeItem";
-import {TableColumn} from "../../../src/Components/TableColumn/TableColumn";
-import {ColumnData} from "../helpers/ColumnData";
-import {CriteriaTableControllerContextTypes} from "../../../src/Components/CriteriaTableController";
+import { ReactWrapper, mount } from "enzyme";
+
+import { ColumnData } from "../helpers/ColumnData";
+import { TableColumn } from "../../../src/Components/TableColumn";
+import { SettingsTreeItem } from "../../../src/Components/SettingsTree";
+import { CriteriaTableControllerContextTypes } from "../../../src/Components/CriteriaTableController";
 
 describe("<SettingsTreeItem/>", () => {
     let wrapper: ReactWrapper<any, any>;
@@ -35,14 +36,14 @@ describe("<SettingsTreeItem/>", () => {
                 activeTableKey="key"
                 groupId="group"
             />,
-            {context, childContextTypes: CriteriaTableControllerContextTypes}
+            { context, childContextTypes: CriteriaTableControllerContextTypes }
         );
     });
 
     afterEach(() => {
         moved = false;
         saved = false;
-    })
+    });
 
     it("Should change `isOpen state on dropdown click", () => {
         const state = wrapper.state().isOpen;
@@ -50,17 +51,17 @@ describe("<SettingsTreeItem/>", () => {
         (wrapper.instance() as any).handleDropDownClick();
 
         expect(wrapper.state().isOpen).to.equal(!state);
-    })
+    });
 
     it("Should change column state on switcher click", () => {
         (wrapper.instance() as any).handleSwitcherClick();
         expect(saved).to.be.true;
-    })
+    });
 
     it("Should render empty node if passed column does not contain child columns", () => {
         wrapper = mount(
             <SettingsTreeItem
-                columnData={new TableColumn({id: "id", show: true})}
+                columnData={new TableColumn({ id: "id", show: true })}
                 onSaveData={handleSave}
                 onMove={handleMove}
                 activeTableKey="key"
@@ -68,9 +69,9 @@ describe("<SettingsTreeItem/>", () => {
                 connectDragSource={target}
                 connectDropTarget={target}
             />,
-            {context, childContextTypes: CriteriaTableControllerContextTypes}
+            { context, childContextTypes: CriteriaTableControllerContextTypes }
         );
 
         expect(wrapper.find(".single").length).to.equal(1);
-    })
-})
+    });
+});
