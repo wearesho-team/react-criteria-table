@@ -5,7 +5,6 @@ const
 
 const
     CleanWebpackPlugin = require('clean-webpack-plugin'),
-    CircularDependencyPlugin = require('circular-dependency-plugin'),
     nodeExternals = require("webpack-node-externals");
 
 const debug = process.env.NODE_ENV !== 'production';
@@ -22,7 +21,7 @@ const config = {
             filename: 'index.js',
             path: path.resolve('./build'),
             publicPath: "/",
-            library: "react-context-form-mask",
+            library: "react-criteria-table",
             libraryTarget: "umd",
         },
 
@@ -33,7 +32,7 @@ const config = {
             modules: [
                 path.resolve('node_modules'),
                 path.resolve('src'),
-            ]
+            ],
         },
 
         module: {
@@ -48,7 +47,7 @@ const config = {
                                     'react',
                                     ['env', {
                                         "targets": {
-                                            "node": "6"
+                                            "browsers": ["last 2 versions", "safari >= 10", "ie >= 11"]
                                         }
                                     }]
                                 ],
@@ -69,7 +68,7 @@ const config = {
                             'react',
                             ['env', {
                                 "targets": {
-                                    "node": "6"
+                                    "browsers": ["last 2 versions", "safari >= 10", "ie >= 11"]
                                 }
                             }]
                         ],
@@ -92,18 +91,6 @@ const config = {
             new webpack.DefinePlugin({
                 'process.env': {
                     'NODE_ENV': JSON.stringify(env)
-                }
-            }),
-            new CircularDependencyPlugin({
-                // exclude detection of files based on a RegExp
-                exclude: /node_modules/,
-                // add errors to webpack instead of warnings
-                failOnError: true,
-                // override `exclude` and `failOnError` behavior
-                // `onDetected` is called for each module that is cyclical
-                onDetected({paths, compilation}) {
-                    // `paths` will be an Array of the relative module paths that make up the cycle
-                    compilation.errors.push(new Error(paths.join(' -> ')))
                 }
             })
         ]

@@ -78,12 +78,14 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
         });
     }
 
-    protected handleFilterChange = (column: Array<any>): void => {
-        this.setState({
+    protected handleFilterChange = (column: Array<{ id: string, value: string }>): void => {
+        Object.assign(this.state, {
             queries: column.length
                 ? column.map(({ id, value }) => ["=", id, value]) as Array<Condition>
                 : undefined
         });
+
+        this.forceUpdate();
     }
 
     protected get cachedState(): CriteriaTableState {

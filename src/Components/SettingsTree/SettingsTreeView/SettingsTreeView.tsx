@@ -1,6 +1,5 @@
 import * as React from "react";
 import * as PropTypes from "prop-types";
-import * as classNames from "classnames";
 
 import {
     SettingsTreeViewProps,
@@ -32,7 +31,7 @@ export class SettingsTreeView extends React.Component<SettingsTreeViewProps> {
         return this.props.childList.arrayList.map((item: TableColumn) => {
             const isEmpty = item.childColumnsArray.length;
             return (
-                <li className={classNames("jqtree_common", isEmpty && "jqtree-folder")} key={item.id}>
+                <li className={`jqtree_common${isEmpty ? " jqtree-folder" : ""}`} key={item.id}>
                     <SettingsTreeItem
                         onMove={this.handleMove(this.props.childList.move)}
                         activeTableKey={this.props.activeTableKey}

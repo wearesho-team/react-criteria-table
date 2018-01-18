@@ -1,6 +1,5 @@
 import * as React from "react";
 import * as PropTypes from "prop-types";
-import * as classNames from "classnames";
 
 import { SettingsTreeItemProps, SettingsTreeItemPropTypes } from "./SettingsTreeItemProps";
 import { DragSourceItem, DropTargetItem } from "../DnDSetup";
@@ -57,10 +56,7 @@ export class SettingsTreeItem extends React.Component<SettingsTreeItemProps, Set
     }
 
     protected get notEmptyNode(): JSX.Element {
-        const className = classNames(
-            "jqtree-toggler jqtree_common fa",
-            this.state.isOpen ? "fa-minus-circle" : "fa-plus-circle"
-        );
+        const className = `jqtree-toggler jqtree_common fa fa-${this.state.isOpen ? "minus-circle" : "plus-circle"}`;
 
         return (
             <React.Fragment>
