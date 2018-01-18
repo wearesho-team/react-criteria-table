@@ -86,8 +86,8 @@ describe("<CriteriaTable/>", () => {
         }));
     });
 
-    it("Should set query to state on handleFilterChange according to passed data", () => {
-        (wrapper.instance() as any).handleFilterChange([{ id: "field", value: 1 }]);
+    it("Should set query to state on handleSetQueries according to passed data", () => {
+        (wrapper.instance() as any).handleSetQueries([["=", "field", 1]]);
         expect(JSON.stringify(wrapper.state().queries)).to.equal(JSON.stringify([["=", "field", 1]]))
     });
 });

@@ -1,3 +1,4 @@
+export * from "./Components/SearchTools";
 export * from "./Components/TableColumn";
 export * from "./Components/SettingsTree";
 export * from "./Components/CriteriaTable";

@@ -4,15 +4,13 @@ import * as PropTypes from "prop-types";
 import axios, { CancelTokenSource } from "axios";
 
 import { TableColumn } from "../TableColumn";
+import { Condition, CriteriaTableContext, CriteriaTableContextTypes } from "./CriteriaTableContext";
 import { CriteriaTableProps, CriteriaTablePropTypes, CriteriaTableDefautProps } from "./CriteriaTableProps";
 import { CriteriaTableControllerContextTypes, CriteriaTableControllerContext } from "../CriteriaTableController";
 
-export type ConditionType = "=" | "<>" | ">" | "<" | "!=" | ">=" | "<=" | "like" | "in";
-export type Condition = [ConditionType, string, string | number | boolean];
-
 export interface CriteriaTableState {
     cancelToken?: CancelTokenSource;
-    queries?: Array<Condition>;
+    queries: Array<Condition>;
     data: {
         list: Array<any>;
         count: number;
@@ -31,6 +29,7 @@ export interface FetchState {
 
 export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaTableState> {
     public static readonly contextTypes = CriteriaTableControllerContextTypes;
+    public static readonly childContextTypes = CriteriaTableContextTypes;
     public static readonly defaultProps = CriteriaTableDefautProps;
     public static readonly propTypes = CriteriaTablePropTypes;
 
@@ -39,7 +38,16 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
     constructor(props) {
         super(props);
 
-        this.state = this.cachedState;
+        this.state = {
+            ...this.cachedState,
+            queries: []
+        }
+    }
+
+    public getChildContext(): CriteriaTableContext {
+        return {
+            setQueries: this.handleSetQueries
+        }
     }
 
     public componentWillMount() {
@@ -78,13 +86,8 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
         });
     }
 
-    protected handleFilterChange = (column: Array<{ id: string, value: string }>): void => {
-        Object.assign(this.state, {
-            queries: column.length
-                ? column.map(({ id, value }) => ["=", id, value]) as Array<Condition>
-                : undefined
-        });
-
+    protected handleSetQueries = (conditionQueries: Array<Condition>): void => {
+        Object.assign(this.state, { queries: conditionQueries.filter((condition) => condition.length > 0) });
         this.forceUpdate();
     }
 
@@ -100,7 +103,6 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
 
     protected get commonProps() {
         return {
-            onFilteredChange: this.handleFilterChange,
             onFetchData: this.handleFetchData as any, // Request new data when things change
             loading: !!this.state.cancelToken, // Display the loading overlay when we need it
             className: "-striped -highlight",
