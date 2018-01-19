@@ -35,7 +35,7 @@ export class SettingsTreeItem extends React.Component<SettingsTreeItemProps, Set
                             type="checkbox"
                             className="toggle-switch__checkbox"
                             checked={!this.props.columnData.show}
-                            onChange={this.handleSwitcherClick}
+                            onClick={this.handleSwitcherClick}
                         />
                         <i className="toggle-switch__helper" />
                     </div>
