@@ -28,7 +28,8 @@ export class ToolTip extends React.Component<ToolTipProps, ToolTipState> {
                 <span onClick={this.handleOpen} className="search search-value">
                     {this.props.displayedValue}
                 </span>
-                <this.renderForm/>
+                {this.props.onClear && <i className="fa fa-times-circle" onClick={this.handleClear}/>}
+                <this.renderForm />
             </React.Fragment>
         )
     }
@@ -41,7 +42,7 @@ export class ToolTip extends React.Component<ToolTipProps, ToolTipState> {
         return (
             <React.Fragment>
                 {this.props.children}
-                <button className="btn btn-search" type="button" onClick={this.handleClose}>
+                <button className="btn btn-outline-secondary" type="button" onClick={this.handleClose}>
                     Найти
                 </button>
             </React.Fragment>
@@ -58,6 +59,13 @@ export class ToolTip extends React.Component<ToolTipProps, ToolTipState> {
         this.setState({ isOpen: false });
 
         this.context.setQueries(this.props.createQueries());
+        this.props.onFetch();
+    }
+
+    protected handleClear = () => {
+        this.setState({ isOpen: false });
+        this.props.onClear();
+        this.context.setQueries([]);
         this.props.onFetch();
     }
 }

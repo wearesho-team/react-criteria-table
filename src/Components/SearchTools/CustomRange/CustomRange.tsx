@@ -27,18 +27,16 @@ export class CustomRange extends React.Component<CustomRangeProps, CustomRangeSt
     public render(): JSX.Element {
         return (
             <ToolTip
+                onClear={this.state.label !== this.props.defaultLabel ? this.handleClear : undefined}
                 createQueries={this.handleCreateQueries}
                 displayedValue={this.state.label}
-                onFetch={this.props.onFecth}
+                onFetch={this.props.onFetch}
             >
                 <div className="search search-number-range">
                     <span className="label label-from">от</span>
-                    {this.props.fromElement({onChange: this.handleChange("from"), value: this.state.from})}
+                    {this.props.fromElement({ onChange: this.handleChange("from"), value: this.state.from })}
                     <span className="label label-to">до</span>
-                    {this.props.fromElement({onChange: this.handleChange("to"), value: this.state.to})}
-                    <button className="btn btn-clear" type="button" onClick={this.handleClear}>
-                        Все
-                    </button>
+                    {this.props.fromElement({ onChange: this.handleChange("to"), value: this.state.to })}
                 </div>
             </ToolTip>
         )

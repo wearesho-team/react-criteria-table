@@ -30,9 +30,10 @@ export class NumberRange extends React.Component<SearchToolRequiredProps, Number
     public render(): JSX.Element {
         return (
             <ToolTip
+                onClear={this.state.label !== this.props.defaultLabel ? this.handleClear : undefined}
                 createQueries={this.handleCreateQueries}
                 displayedValue={this.state.label}
-                onFetch={this.props.onFecth}
+                onFetch={this.props.onFetch}
             >
                 <div className="search search-number-range">
                     <span className="label label-from">от</span>
@@ -49,9 +50,6 @@ export class NumberRange extends React.Component<SearchToolRequiredProps, Number
                         value={this.state.to || ""}
                         type="number"
                     />
-                    <button className="btn btn-clear" type="button" onClick={this.handleClear}>
-                        Все
-                    </button>
                 </div>
             </ToolTip>
         )

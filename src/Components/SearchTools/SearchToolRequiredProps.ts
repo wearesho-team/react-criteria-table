@@ -2,13 +2,13 @@ import * as PropTypes from "prop-types";
 
 export interface SearchToolRequiredProps {
     defaultLabel?: string;
-    onFecth: () => void;
+    onFetch: () => void;
     columnId: string;
 }
 
 export const SearchToolRequiredPropTypes: {[P in keyof SearchToolRequiredProps]: PropTypes.Validator<any>} = {
     columnId: PropTypes.string.isRequired,
-    onFecth: PropTypes.func.isRequired,
+    onFetch: PropTypes.func.isRequired,
     defaultLabel: PropTypes.string
 };
 

@@ -1,19 +1,16 @@
 import * as React from "react";
 import * as PropTypes from "prop-types";
 
+import { CustomMatchPropTypes, CustomMatchProps } from "./CustomMatchProps";
+import { SearchToolRequiredDefaultProps } from "../SearchToolRequiredProps";
 import { Condition, CriteriaTableContextTypes, CriteriaTableContext } from "../../CriteriaTable";
-import {
-    SearchToolRequiredProps,
-    SearchToolRequiredPropTypes,
-    SearchToolRequiredDefaultProps
-} from "../SearchToolRequiredProps";
 
-export interface StringMatchState {
-    searchValue: string;
+export interface CustomMatchState {
+    searchValue: string | number;
 }
 
-export class StringMatch extends React.Component<SearchToolRequiredProps, StringMatchState> {
-    public static readonly propTypes = SearchToolRequiredPropTypes;
+export class CustomMatch extends React.Component<CustomMatchProps, CustomMatchState> {
+    public static readonly propTypes = CustomMatchPropTypes;
     public static readonly contextTypes = CriteriaTableContextTypes;
     public static readonly defaultProps = SearchToolRequiredDefaultProps;
 
@@ -28,15 +25,7 @@ export class StringMatch extends React.Component<SearchToolRequiredProps, String
     }
 
     public render(): JSX.Element {
-        return (
-            <input
-                placeholder={this.props.defaultLabel}
-                className="control control-from"
-                value={this.state.searchValue}
-                onChange={this.handleChange}
-                type="text"
-            />
-        )
+        return this.props.element({ onChange: this.handleChange, value: this.state.searchValue });
     }
 
     protected handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -48,6 +37,8 @@ export class StringMatch extends React.Component<SearchToolRequiredProps, String
     }
 
     private handleCreateQueries = (): Array<Condition> => ([
-        this.state.searchValue ? ["like", this.props.columnId, this.state.searchValue] : [] as Condition
+        this.state.searchValue
+            ? [this.props.isStrict ? "=" : "like", this.props.columnId, this.state.searchValue]
+            : [] as Condition
     ]);
 }

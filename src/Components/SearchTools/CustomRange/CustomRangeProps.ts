@@ -5,10 +5,7 @@ import {
     SearchToolRequiredPropTypes
 } from "../SearchToolRequiredProps";
 
-export interface PassingProps {
-    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
-    value: string | number
-}
+import { PassingProps } from "../PassingProps"
 
 export interface CustomRangeProps extends SearchToolRequiredProps {
     fromElement: (PassingProps) => JSX.Element;
