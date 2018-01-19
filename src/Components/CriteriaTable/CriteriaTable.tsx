@@ -76,7 +76,16 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
             queries: this.state.queries
         };
 
-        const response = await this.props.onFetchData(fetchState);
+        let response;
+
+        try {
+            response = await this.props.onFetchData(fetchState);
+        } catch (error) {
+            this.setState({
+                cancelToken: undefined
+            });
+            return this.context.onError(error);
+        }
 
         window.localStorage.setItem(this.props.cacheKey, JSON.stringify({ data: response.data }));
         this.setState({
