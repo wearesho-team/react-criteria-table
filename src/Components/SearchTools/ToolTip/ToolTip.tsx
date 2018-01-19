@@ -40,12 +40,12 @@ export class ToolTip extends React.Component<ToolTipProps, ToolTipState> {
         }
 
         return (
-            <React.Fragment>
+            <div className="tooltip table-tooltip">
                 {this.props.children}
                 <button className="btn btn-outline-secondary" type="button" onClick={this.handleClose}>
                     Найти
                 </button>
-            </React.Fragment>
+            </div>
         )
     }
 
