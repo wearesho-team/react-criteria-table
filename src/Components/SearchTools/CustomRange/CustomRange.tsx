@@ -49,11 +49,11 @@ export class CustomRange extends React.Component<CustomRangeProps, CustomRangeSt
         this.forceUpdate();
 
         let label = "";
-        if (this.state.from !== undefined) {
+        if (this.state.from) {
             label += `от ${this.state.from}`;
         }
 
-        if (this.state.to !== undefined) {
+        if (this.state.to) {
             label += ` до ${this.state.to}`;
         }
 
@@ -66,13 +66,14 @@ export class CustomRange extends React.Component<CustomRangeProps, CustomRangeSt
 
     protected handleClear = () => {
         this.setState({
+            label: this.props.defaultLabel,
             from: undefined,
             to: undefined
         });
     }
 
     private handleCreateQueries = (): Array<Condition> => ([
-        this.state.from !== undefined ? [">=", this.props.columnId, this.state.from] : [] as Condition,
-        this.state.to !== undefined ? ["<=", this.props.columnId, this.state.to] : [] as Condition
+        this.state.from ? [">=", this.props.columnId, this.state.from] : [] as Condition,
+        this.state.to ? ["<=", this.props.columnId, this.state.to] : [] as Condition
     ]);
 }

@@ -79,6 +79,7 @@ export class NumberRange extends React.Component<SearchToolRequiredProps, Number
 
     protected handleClear = () => {
         this.setState({
+            label: this.props.defaultLabel,
             from: undefined,
             to: undefined
         });
