@@ -49,9 +49,11 @@ export class NumberRange extends React.Component<SearchToolRequiredProps, Number
                         value={this.state.to || ""}
                         type="number"
                     />
-                    <button className="btn btn-clear" type="button" onClick={this.handleClear}>
-                        Все
-                    </button>
+                    <div className="align-container">
+                        <button className="btn btn-clear" type="button" onClick={this.handleClear}>
+                            Очистить
+                        </button>
+                    </div>
                 </div>
             </ToolTip>
         )

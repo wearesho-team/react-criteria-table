@@ -36,9 +36,11 @@ export class CustomRange extends React.Component<CustomRangeProps, CustomRangeSt
                     {this.props.fromElement({onChange: this.handleChange("from"), value: this.state.from})}
                     <span className="label label-to">до</span>
                     {this.props.fromElement({onChange: this.handleChange("to"), value: this.state.to})}
-                    <button className="btn btn-clear" type="button" onClick={this.handleClear}>
-                        Все
-                    </button>
+                    <div className="align-container">
+                        <button className="btn btn-clear" type="button" onClick={this.handleClear}>
+                            Очистить
+                        </button>
+                    </div>
                 </div>
             </ToolTip>
         )
