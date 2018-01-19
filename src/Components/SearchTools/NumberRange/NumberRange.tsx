@@ -2,31 +2,9 @@ import * as React from "react";
 import * as PropTypes from "prop-types";
 
 import { ToolTip } from "../ToolTip"
-import { Condition } from "../../CriteriaTable";
-import {
-    SearchToolRequiredProps,
-    SearchToolRequiredPropTypes,
-    SearchToolRequiredDefaultProps
-} from "../SearchToolRequiredProps";
+import { BaseRange } from "../BaseRange";
 
-export interface NumberRangeState {
-    label: string;
-    from?: number;
-    to?: number;
-}
-
-export class NumberRange extends React.Component<SearchToolRequiredProps, NumberRangeState> {
-    public static readonly propTypes = SearchToolRequiredPropTypes;
-    public static readonly defaultProps = SearchToolRequiredDefaultProps;
-
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            label: this.props.defaultLabel
-        }
-    }
-
+export class NumberRange extends BaseRange {
     public render(): JSX.Element {
         return (
             <ToolTip
@@ -54,38 +32,4 @@ export class NumberRange extends React.Component<SearchToolRequiredProps, Number
             </ToolTip>
         )
     }
-
-    protected handleChange = (field: any) => (event: React.ChangeEvent<HTMLInputElement>): void => {
-        Object.assign(this.state, { [field]: event.currentTarget.value })
-        this.forceUpdate();
-
-        let label = "";
-        if (this.state.from !== undefined) {
-            label += `от ${this.state.from}`;
-        }
-
-        if (this.state.to !== undefined) {
-            label += ` до ${this.state.to}`;
-        }
-
-        if (!label.length) {
-            label = this.props.defaultLabel;
-        }
-
-        this.setState({ label });
-    }
-
-    protected handleClear = () => {
-        this.setState({
-            label: this.props.defaultLabel,
-            from: undefined,
-            to: undefined
-        });
-    }
-
-    private handleCreateQueries = (): Array<Condition> => ([
-        this.state.from !== undefined ? [">=", this.props.columnId, this.state.from] : [] as Condition,
-        this.state.to !== undefined ? ["<=", this.props.columnId, this.state.to] : [] as Condition
-    ]);
-
 }
