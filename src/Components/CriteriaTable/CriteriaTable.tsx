@@ -54,6 +54,10 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
         this.context.initData(this.props.cacheKey, this.props.onDefaults(this.state)());
     }
 
+    public componentWillUnmount() {
+        this.state.cancelToken && this.state.cancelToken.cancel(`${this.props.cacheKey} will unmount}`);
+    }
+
     public render(): JSX.Element {
         return (
             <ReactTable
@@ -87,7 +91,11 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
             return this.context.onError(error);
         }
 
-        window.localStorage.setItem(this.props.cacheKey, JSON.stringify({ data: response.data }));
+        window.localStorage.setItem(this.props.cacheKey, JSON.stringify({
+            data: response.data,
+            queries: this.state.queries,
+        }));
+
         this.setState({
             data: response.data,
             cancelToken: undefined,

@@ -77,7 +77,8 @@ describe("<CriteriaTable/>", () => {
             data: {
                 value: "wow",
                 count: 1,
-            }
+            },
+            queries: [],
         }));
 
         expect(JSON.stringify(wrapper.state().data)).to.equal(JSON.stringify({
