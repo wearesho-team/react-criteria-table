@@ -9,7 +9,7 @@ React Criteria Table is use context (https://reactjs.org/docs/context.html).
 <CriteriaTableController>
    <CriteriaTable 
         cacheKey="tableOne" 
-        onFetchData={(state: FetchState) => /*do requests here*/
+        onFetchData={(state: Partial<CriteriaTableState>) => /*do requests here*/
         onDefaults={(state: CriteriaTableState) => () => ([
             {id: "name", show: true },
             {id: "surName", show: true },
@@ -29,19 +29,15 @@ React Criteria Table is use context (https://reactjs.org/docs/context.html).
 
 `Condition`: [`ConditionType`, `string`, `string` | `number` | `boolean`]
 
-`FetchState`: 
-- cancelToken: `CancelTokenSource` (https://github.com/axios/axios#cancellation)
-- queries: `Array<Condition>`
-- sorted: `Array<any>`
-- pageSize: `number`
-- page: `number`
-
 `CriteriaTableState`:
-- cancelToken?: `CancelTokenSource`
+- cancelToken?: `CancelTokenSource`(https://github.com/axios/axios#cancellation)
 - queries?: `Array<Condition>`
 - data: {
     - list: `Array<any>`
     - count: `number`
     - total: `any`
     }
+- sorted?: Array<{ id: `string`, desc: `boolean` }>
+- pageSize?: `number`
 - pages?: `number`
+- page?: `number`
