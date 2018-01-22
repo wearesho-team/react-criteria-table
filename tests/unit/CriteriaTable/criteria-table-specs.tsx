@@ -38,6 +38,7 @@ describe("<CriteriaTable/>", () => {
             <CriteriaTable onDefaults={handleDefaults} onFetchData={handleFetchData} cacheKey="key" />,
             { context }
         );
+
     });
 
     afterEach(() => {
@@ -70,15 +71,14 @@ describe("<CriteriaTable/>", () => {
             }
         });
 
-        // tslint:disable-next-line
-        await wrapper.unmount().mount();
+        await (wrapper.instance() as any).handleFetchData();
 
         expect(savedData).to.equal(JSON.stringify({
+            ...(wrapper.instance() as any).cachedState,
             data: {
                 value: "wow",
                 count: 1,
-            },
-            queries: [],
+            }
         }));
 
         expect(JSON.stringify(wrapper.state().data)).to.equal(JSON.stringify({
