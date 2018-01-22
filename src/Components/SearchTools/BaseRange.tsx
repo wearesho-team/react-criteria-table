@@ -9,9 +9,9 @@ import {
 import { Condition, CriteriaTableContextTypes, CriteriaTableContext } from "../CriteriaTable";
 
 export interface BaseRangeState {
-    label: string;
     from?: number | string;
     to?: number | string;
+    label: string;
 }
 
 export class BaseRange
@@ -21,20 +21,43 @@ export class BaseRange
     > extends React.Component<ChildProps, ChildState> {
 
     public static readonly propTypes = SearchToolRequiredPropTypes;
+    public static readonly contextTypes = CriteriaTableContextTypes;
     public static readonly defaultProps = SearchToolRequiredDefaultProps;
 
-    constructor(props) {
-        super(props);
+    public readonly context: CriteriaTableContext;
+    public state: ChildState = {} as ChildState;
 
-        this.state = {
-            label: this.props.defaultLabel
-        } as ChildState;
+    public componentWillMount() {
+        const matchQuery = this.context.getQueries().filter((condition) => condition[1] === this.props.columnId);
+        const from = matchQuery.find((condition) => condition[0] === ">=");
+        const to = matchQuery.find((condition) => condition[0] === "<=");
+
+        from && (this.state.from = from[2] as string);
+        to && (this.state.to = to[2] as string);
+
+        this.state.label = this.label;
     }
 
     protected handleChange = (field: any) => (event: React.ChangeEvent<HTMLInputElement>): void => {
         Object.assign(this.state, { [field]: event.currentTarget.value })
         this.forceUpdate();
 
+        this.setState({ label: this.label });
+    }
+
+    protected handleClear = () => {
+        this.state.label = this.props.defaultLabel;
+        this.state.from = undefined;
+        this.state.to = undefined;
+        this.forceUpdate();
+    }
+
+    protected handleCreateQueries = (): Array<Condition> => ([
+         [">=", this.props.columnId, this.state.from || ""],
+         ["<=", this.props.columnId, this.state.to || ""]
+    ]);
+
+    protected get label(): string {
         let label = "";
         if (this.state.from !== undefined && this.state.from.toString().length) {
             label += `от ${this.state.from}`;
@@ -48,23 +71,6 @@ export class BaseRange
             label = this.props.defaultLabel;
         }
 
-        this.setState({ label });
+        return label;
     }
-
-    protected handleClear = () => {
-        this.setState({
-            label: this.props.defaultLabel,
-            from: undefined,
-            to: undefined
-        });
-    }
-
-    protected handleCreateQueries = (): Array<Condition> => ([
-        this.state.from !== undefined && this.state.from.toString().length
-            ? [">=", this.props.columnId, this.state.from]
-            : [] as Condition,
-        this.state.to !== undefined && this.state.to.toString().length
-            ? ["<=", this.props.columnId, this.state.to]
-            : [] as Condition
-    ]);
 }

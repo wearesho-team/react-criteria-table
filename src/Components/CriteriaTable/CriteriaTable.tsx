@@ -16,15 +16,10 @@ export interface CriteriaTableState {
         count: number;
         total: any;
     };
+    sorted?: Array<{ id: string, desc: boolean }>;
+    pageSize?: number;
     pages?: number;
-}
-
-export interface FetchState {
-    cancelToken: CancelTokenSource;
-    queries: Array<Condition>;
-    sorted: Array<any>;
-    pageSize: number;
-    page: number;
+    page?: number;
 }
 
 export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaTableState> {
@@ -33,20 +28,22 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
     public static readonly defaultProps = CriteriaTableDefautProps;
     public static readonly propTypes = CriteriaTablePropTypes;
 
+    public static fetchDelay = 200;
+
     public readonly context: CriteriaTableControllerContext;
+
+    public timer: any;
 
     constructor(props) {
         super(props);
 
-        this.state = {
-            ...this.cachedState,
-            queries: []
-        }
+        this.state = this.cachedState;
     }
 
     public getChildContext(): CriteriaTableContext {
         return {
-            setQueries: this.handleSetQueries
+            setQueries: this.handleSetQueries,
+            getQueries: this.handleGetQueries
         }
     }
 
@@ -67,44 +64,69 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
         );
     }
 
-    protected handleFetchData = async (state: any): Promise<void> => {
+    protected fetchDataControl = (): void => {
+        clearTimeout(this.timer);
         this.state.cancelToken && this.state.cancelToken.cancel();
-        const cancelToken = axios.CancelToken.source();
-        this.setState({ cancelToken });
+        this.setState({
+            cancelToken: axios.CancelToken.source()
+        });
+        this.timer = setTimeout(() => this.handleFetchData(), CriteriaTable.fetchDelay);
+    }
 
-        const fetchState: FetchState = {
-            cancelToken,
-            page: state.page,
-            sorted: state.sorted,
-            pageSize: state.pageSize,
-            queries: this.state.queries
-        };
+    protected handleSortedChange = (sorted: Array<{ id: string, desc: boolean }>): void => this.setState({ sorted });
 
+    protected handlePageSizeChange = (pageSize: number): void => this.setState({ pageSize });
+
+    protected handlePageChange = (page: number): void => this.setState({ page });
+
+    protected handleGetQueries = (): Array<Condition> => this.state.queries
+
+    protected handleFetchData = async (): Promise<void> => {
         let response;
-
         try {
-            response = await this.props.onFetchData(fetchState);
+            response = await this.props.onFetchData({
+                cancelToken: this.state.cancelToken,
+                queries: this.state.queries,
+                pageSize: this.state.pageSize,
+                sorted: this.state.sorted,
+                page: this.state.page
+            });
         } catch (error) {
             this.setState({
                 cancelToken: undefined
             });
+
             return this.context.onError(error);
         }
 
-        window.localStorage.setItem(this.props.cacheKey, JSON.stringify({
-            data: response.data,
-            queries: this.state.queries,
+        this.setState(({ pageSize }) => ({
+            pages: Math.ceil(response && response.data.count / pageSize),
+            cancelToken: undefined,
+            data: response.data
         }));
 
-        this.setState({
-            data: response.data,
-            cancelToken: undefined,
-            pages: Math.ceil(response && response.data.count / state.pageSize)
-        });
+        window.localStorage.setItem(this.props.cacheKey, JSON.stringify(this.state));
     }
 
     protected handleSetQueries = (conditionQueries: Array<Condition>): void => {
-        Object.assign(this.state, { queries: conditionQueries.filter((condition) => condition.length > 0) });
+        // remove empty queries
+        let newQueries = conditionQueries.filter((condition) => condition.length);
+
+        // replace values in exist queries
+        const [oldQueries] = newQueries
+            .map((condition) => this.state.queries
+                .filter((stateCondition) => stateCondition[1] !== condition[1])
+            );
+
+        // remove queries with emtpy values
+        newQueries = newQueries.filter((condition) => condition[2].toString().length);
+
+        Object.assign(this.state, {
+            queries: [
+                ...newQueries,
+                ...oldQueries
+            ]
+        });
         this.forceUpdate();
     }
 
@@ -115,21 +137,40 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
             return cached;
         }
 
-        return { data: { list: [], total: {}, count: 0 } } as CriteriaTableState;
+        return {
+            data: {
+                list: [],
+                total: {},
+                count: 0
+            },
+            queries: [],
+            pageSize: 10,
+            pages: 1,
+            page: 0,
+            sorted: [{
+                desc: false,
+                id: "id"
+            }]
+        };
     }
 
     protected get commonProps() {
         return {
-            onFetchData: this.handleFetchData as any, // Request new data when things change
-            loading: !!this.state.cancelToken, // Display the loading overlay when we need it
+            onPageSizeChange: this.handlePageSizeChange,
+            onSortedChange: this.handleSortedChange,
+            onPageChange: this.handlePageChange,
+            onFetchData: this.fetchDataControl,
+            loading: !!this.state.cancelToken,
             className: "-striped -highlight",
+            pageSize: this.state.pageSize,
             data: this.state.data.list,
-            defaultPageSize: 10,
+            sorted: this.state.sorted,
+            pages: this.state.pages,
+            page: this.state.page,
             multiSort: false,
             filterable: true,
-            manual: true, // Forces table not to paginate or sort automatically, so we can handle it server-side,
-            ...{ pages: this.state.pages },
-            ...this.props.labels
+            manual: true,
+            ...this.props.labels,
         };
     }
 }

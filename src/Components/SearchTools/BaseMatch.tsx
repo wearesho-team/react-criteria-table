@@ -24,17 +24,17 @@ export class BaseMatch
     public static readonly defaultProps = SearchToolRequiredDefaultProps;
 
     public readonly context: CriteriaTableContext;
+    public state: ChildState = {
+        searchValue: undefined
+    } as ChildState;
 
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            searchValue: undefined
-        } as ChildState;
+    public componentWillMount() {
+        const matchQuery = this.context.getQueries().find((condition) => condition[1] === this.props.columnId);
+        matchQuery && (this.state.searchValue = matchQuery[2] as string);
     }
 
     protected handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        Object.assign(this.state, { searchValue: event.currentTarget.value })
+        this.state.searchValue = event.currentTarget.value;
         this.forceUpdate();
 
         this.context.setQueries(this.handleCreateQueries());
@@ -42,9 +42,7 @@ export class BaseMatch
     }
 
     protected handleCreateQueries = (): Array<Condition> => ([
-        this.state.searchValue !== undefined && this.state.searchValue.toString().length
-            ? ["=", this.props.columnId, this.state.searchValue]
-            : [] as Condition
+        ["=", this.props.columnId, this.state.searchValue || ""]
     ]);
 
 }

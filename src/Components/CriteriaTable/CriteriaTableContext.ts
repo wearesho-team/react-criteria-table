@@ -4,9 +4,11 @@ export type ConditionType = "=" | "<>" | ">" | "<" | "!=" | ">=" | "<=" | "like"
 export type Condition = [ConditionType, string, string | number | boolean];
 
 export interface CriteriaTableContext {
-    setQueries?: (queries: Array<Condition>) => void;
+    setQueries: (queries: Array<Condition>) => void;
+    getQueries: () => Array<Condition>
 }
 
 export const CriteriaTableContextTypes: {[P in keyof CriteriaTableContext]: PropTypes.Validator<any>} = {
-    setQueries: PropTypes.func
+    setQueries: PropTypes.func.isRequired,
+    getQueries: PropTypes.func.isRequired
 };

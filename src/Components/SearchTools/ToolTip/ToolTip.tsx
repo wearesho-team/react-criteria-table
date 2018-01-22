@@ -85,7 +85,7 @@ export class ToolTip extends React.Component<ToolTipProps, ToolTipState> {
     protected handleClear = () => {
         this.setState({ isOpen: false });
         this.props.onClear();
-        this.context.setQueries([]);
+        this.context.setQueries(this.props.createQueries());
         this.props.onFetch();
     }
 }

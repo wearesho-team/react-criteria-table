@@ -5,8 +5,8 @@ import { Condition } from "../../CriteriaTable";
 export interface ToolTipProps {
     createQueries: () => Array<Condition>;
     displayedValue: string;
-    onFetch: () => void;
     onClear?: () => void;
+    onFetch: () => void;
 }
 
 export const ToolTipPropTypes: {[P in keyof ToolTipProps]: PropTypes.Validator<any>} = {

@@ -25,8 +25,10 @@ export class CustomMatch extends BaseMatch<CustomMatchProps> {
     }
 
     protected handleCreateQueries = (): Array<Condition> => ([
-        this.state.searchValue
-            ? [this.props.isStrict ? "=" : "like", this.props.columnId, this.state.searchValue]
-            : [] as Condition
+        [
+            this.props.isStrict ? "=" : "like",
+            this.props.columnId,
+            this.state.searchValue !== undefined ? this.state.searchValue : ""
+        ]
     ]);
 }

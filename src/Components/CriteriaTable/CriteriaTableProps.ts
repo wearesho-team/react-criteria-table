@@ -1,11 +1,11 @@
 import * as PropTypes from "prop-types";
 
-import { CriteriaTableState, FetchState } from "./CriteriaTable";
+import { CriteriaTableState } from "./CriteriaTable";
 import { TableColumn } from "../TableColumn";
 
 export interface CriteriaTableProps {
     onDefaults: (state: CriteriaTableState) => () => Array<Partial<TableColumn>>;
-    onFetchData: (state: FetchState) => Promise<CriteriaTableState>;
+    onFetchData: (state: Partial<CriteriaTableState>) => Promise<CriteriaTableState>;
     cacheKey: string;
     labels?: {
         previousText?: string;
