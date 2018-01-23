@@ -124,7 +124,7 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
         Object.assign(this.state, {
             queries: [
                 ...newQueries,
-                ...oldQueries
+                ...(oldQueries || [])
             ]
         });
         this.forceUpdate();
