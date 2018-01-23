@@ -32,6 +32,7 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
 
     public readonly context: CriteriaTableControllerContext;
 
+    public state: CriteriaTableState;
     public timer: any;
 
     constructor(props) {
@@ -52,7 +53,7 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
     }
 
     public componentWillUnmount() {
-        this.state.cancelToken && this.state.cancelToken.cancel(`${this.props.cacheKey} will unmount}`);
+        this.state.cancelToken && this.state.cancelToken.cancel(`${this.props.cacheKey} will unmount`);
     }
 
     public render(): JSX.Element {
@@ -67,15 +68,20 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
     protected fetchDataControl = (): void => {
         clearTimeout(this.timer);
         this.state.cancelToken && this.state.cancelToken.cancel();
-        this.setState({
-            cancelToken: axios.CancelToken.source()
-        });
+        this.state.cancelToken = axios.CancelToken.source();
+
         this.timer = setTimeout(() => this.handleFetchData(), CriteriaTable.fetchDelay);
     }
 
     protected handleSortedChange = (sorted: Array<{ id: string, desc: boolean }>): void => this.setState({ sorted });
 
-    protected handlePageSizeChange = (pageSize: number): void => this.setState({ pageSize });
+    protected handlePageSizeChange = (pageSize: number): void => {
+        /* Before change page size we needs to go to first page
+         * for preventing infinite loop
+         */
+        this.state.page && this.handlePageChange(0);
+        this.setState({ pageSize });
+    };
 
     protected handlePageChange = (page: number): void => this.setState({ page });
 
@@ -121,12 +127,11 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
         // remove queries with emtpy values
         newQueries = newQueries.filter((condition) => condition[2].toString().length);
 
-        Object.assign(this.state, {
-            queries: [
-                ...newQueries,
-                ...(oldQueries || [])
-            ]
-        });
+        this.state.queries = [
+            ...newQueries,
+            ...(oldQueries || [])
+        ];
+
         this.forceUpdate();
     }
 
@@ -170,7 +175,7 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
             multiSort: false,
             filterable: true,
             manual: true,
-            ...this.props.labels,
+            ...this.props.labels
         };
     }
 }
