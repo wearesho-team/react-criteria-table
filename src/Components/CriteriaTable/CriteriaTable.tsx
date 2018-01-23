@@ -16,6 +16,7 @@ export interface CriteriaTableState {
         count: number;
         total: any;
     };
+    resized?: Array<{ id: string, value: number }>;
     sorted?: Array<{ id: string, desc: boolean }>;
     pageSize?: number;
     pages?: number;
@@ -28,17 +29,12 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
     public static readonly defaultProps = CriteriaTableDefautProps;
     public static readonly propTypes = CriteriaTablePropTypes;
 
-    public static fetchDelay = 200;
+    public static actionDelay = 200;
 
     public readonly context: CriteriaTableControllerContext;
 
+    public state: CriteriaTableState = this.cachedState;
     public timer: any;
-
-    constructor(props) {
-        super(props);
-
-        this.state = this.cachedState;
-    }
 
     public getChildContext(): CriteriaTableContext {
         return {
@@ -52,14 +48,21 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
     }
 
     public componentWillUnmount() {
-        this.state.cancelToken && this.state.cancelToken.cancel(`${this.props.cacheKey} will unmount}`);
+        this.state.cancelToken && this.state.cancelToken.cancel(`${this.props.cacheKey} will unmount`);
     }
 
     public render(): JSX.Element {
         return (
             <ReactTable
-                columns={this.context.getCurrentVisibleData(this.props.cacheKey) as any}
-                {...this.commonProps}
+                columns={this.context.getCurrentVisibleData(this.props.cacheKey)}
+                loading={!!this.state.cancelToken}
+                className="-striped -highlight"
+                multiSort={false}
+                filterable
+                manual
+                {...this.controlledStateCallbacks}
+                {...this.controlledStateOverrides}
+                {...this.props.labels}
             />
         );
     }
@@ -67,15 +70,27 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
     protected fetchDataControl = (): void => {
         clearTimeout(this.timer);
         this.state.cancelToken && this.state.cancelToken.cancel();
-        this.setState({
-            cancelToken: axios.CancelToken.source()
-        });
-        this.timer = setTimeout(() => this.handleFetchData(), CriteriaTable.fetchDelay);
+        this.state.cancelToken = axios.CancelToken.source();
+
+        this.timer = setTimeout(() => this.handleFetchData(), CriteriaTable.actionDelay);
     }
+
+    protected handlePageSizeChange = (pageSize: number): void => {
+        /* Before change page size we needs to go to first page
+         * for preventing infinite loop
+         */
+        this.state.page && this.handlePageChange(0);
+        this.setState({ pageSize });
+    };
 
     protected handleSortedChange = (sorted: Array<{ id: string, desc: boolean }>): void => this.setState({ sorted });
 
-    protected handlePageSizeChange = (pageSize: number): void => this.setState({ pageSize });
+    protected handleResized = (resized: Array<{ id: string, value: number }>): void => {
+        this.setState({ resized });
+
+        clearTimeout(this.timer);
+        this.timer = setTimeout(() => this.saveData(), CriteriaTable.actionDelay);
+    };
 
     protected handlePageChange = (page: number): void => this.setState({ page });
 
@@ -105,7 +120,7 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
             data: response.data
         }));
 
-        window.localStorage.setItem(this.props.cacheKey, JSON.stringify(this.state));
+        this.saveData();
     }
 
     protected handleSetQueries = (conditionQueries: Array<Condition>): void => {
@@ -121,14 +136,15 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
         // remove queries with emtpy values
         newQueries = newQueries.filter((condition) => condition[2].toString().length);
 
-        Object.assign(this.state, {
-            queries: [
-                ...newQueries,
-                ...oldQueries
-            ]
-        });
+        this.state.queries = [
+            ...newQueries,
+            ...(oldQueries || [])
+        ];
+
         this.forceUpdate();
     }
+
+    protected saveData = (): void => window.localStorage.setItem(this.props.cacheKey, JSON.stringify(this.state));
 
     protected get cachedState(): CriteriaTableState {
         const cached = JSON.parse(window.localStorage.getItem(this.props.cacheKey));
@@ -138,39 +154,34 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
         }
 
         return {
-            data: {
-                list: [],
-                total: {},
-                count: 0
-            },
-            queries: [],
+            data: { list: [], total: {}, count: 0 },
+            sorted: [{ desc: false, id: "id" }],
             pageSize: 10,
+            queries: [],
+            resized: [],
             pages: 1,
-            page: 0,
-            sorted: [{
-                desc: false,
-                id: "id"
-            }]
+            page: 0
         };
     }
 
-    protected get commonProps() {
+    protected get controlledStateCallbacks() {
         return {
             onPageSizeChange: this.handlePageSizeChange,
             onSortedChange: this.handleSortedChange,
             onPageChange: this.handlePageChange,
-            onFetchData: this.fetchDataControl,
-            loading: !!this.state.cancelToken,
-            className: "-striped -highlight",
+            onResizedChange: this.handleResized,
+            onFetchData: this.fetchDataControl
+        }
+    }
+
+    protected get controlledStateOverrides() {
+        return {
             pageSize: this.state.pageSize,
+            resized: this.state.resized,
             data: this.state.data.list,
             sorted: this.state.sorted,
             pages: this.state.pages,
-            page: this.state.page,
-            multiSort: false,
-            filterable: true,
-            manual: true,
-            ...this.props.labels,
-        };
+            page: this.state.page
+        }
     }
 }
