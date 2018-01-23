@@ -17,6 +17,7 @@
     "jsx-key": true,
     "jsx-no-bind": true,
     "jsx-no-lambda": true,
+    "jsx-boolean-value": false,
     "jsx-no-string-ref": true,
     "jsx-self-close": true,
     "jsx-wrap-multiline": true,
