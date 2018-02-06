@@ -2,15 +2,12 @@ import * as React from "react";
 import * as PropTypes from "prop-types";
 
 import { SettingsTreeItemProps, SettingsTreeItemPropTypes } from "./SettingsTreeItemProps";
-import { DragSourceItem, DropTargetItem } from "../DnDSetup";
 import { SettingsTreeView } from "../SettingsTreeView";
 
 export interface SettingsTreeItemState {
     isOpen: boolean;
 }
 
-@DragSourceItem()
-@DropTargetItem()
 export class SettingsTreeItem extends React.Component<SettingsTreeItemProps, SettingsTreeItemState> {
     public static readonly propTypes = SettingsTreeItemPropTypes;
 
@@ -23,11 +20,8 @@ export class SettingsTreeItem extends React.Component<SettingsTreeItemProps, Set
     }
 
     public render(): JSX.Element {
-        const connectDragSource = this.props.connectDragSource || ((e) => e);
-        const connectDropTarget = this.props.connectDropTarget || ((e) => e);
-
-        return connectDropTarget(connectDragSource(
-            <div data-id={this.props.groupId}>
+        return (
+            <React.Fragment>
                 <div className="jqtree-element jqtree_common">
                     {this.isEmpty ? this.emptyNode : this.notEmptyNode}
                     <div className="toggle-switch pull-right">
@@ -42,8 +36,8 @@ export class SettingsTreeItem extends React.Component<SettingsTreeItemProps, Set
                     </div>
                 </div>
                 {this.childTree}
-            </div>
-        ));
+            </React.Fragment>
+        );
     }
 
     protected get isEmpty(): boolean {

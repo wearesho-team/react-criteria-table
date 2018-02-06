@@ -32,9 +32,7 @@ describe("<SettingsTreeItem/>", () => {
             <SettingsTreeItem
                 columnData={new TableColumn(ColumnData)}
                 onSaveData={handleSave}
-                onMove={handleMove}
                 activeTableKey="key"
-                groupId="group"
             />,
             { context, childContextTypes: CriteriaTableControllerContextTypes }
         );
@@ -56,22 +54,5 @@ describe("<SettingsTreeItem/>", () => {
     it("Should change column state on switcher click", () => {
         (wrapper.instance() as any).handleSwitcherClick();
         expect(saved).to.be.true;
-    });
-
-    it("Should render empty node if passed column does not contain child columns", () => {
-        wrapper = mount(
-            <SettingsTreeItem
-                columnData={new TableColumn({ id: "id", show: true })}
-                onSaveData={handleSave}
-                onMove={handleMove}
-                activeTableKey="key"
-                groupId="group"
-                connectDragSource={target}
-                connectDropTarget={target}
-            />,
-            { context, childContextTypes: CriteriaTableControllerContextTypes }
-        );
-
-        expect(wrapper.find(".single").length).to.equal(1);
     });
 });
