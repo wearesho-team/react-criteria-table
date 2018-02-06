@@ -76,7 +76,8 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
     }
 
     protected handlePageSizeChange = (pageSize: number): void => {
-        /* Before change page size we needs to go to first page
+        /*
+         * Before change page size we needs to go to first page
          * for preventing infinite loop
          */
         this.state.page && this.handlePageChange(0);

@@ -1,13 +1,18 @@
+import { arrayMove } from "react-sortable-hoc";
 import { TableColumn } from "./TableColumn";
 
 export class TableColumnRepository {
-    private map: Map<string, TableColumn> = new Map();
+    private map: Map<string, TableColumn>;
+
+    constructor() {
+        this.map = new Map();
+    }
 
     public get arrayList(): Array<TableColumn> {
         return Array.from(this.map.values());
     }
 
-    public add = (data: TableColumn): TableColumnRepository => {
+    public add = (data: TableColumn): TableColumnRepository | never => {
         if (this.map.has(data.id)) {
             throw new Error("Id already exists");
         }
@@ -17,7 +22,19 @@ export class TableColumnRepository {
         return this;
     }
 
-    public move = (cutId: string, toId: string): TableColumnRepository => {
+    public moveByIndex = (oldIndex: number, newIndex: number): TableColumnRepository | never => {
+        if (this.map.size < oldIndex || this.map.size < newIndex || newIndex < 0 || oldIndex < 0) {
+            throw new Error("Index not found");
+        }
+
+        const newList = arrayMove(this.arrayList, oldIndex, newIndex);
+        this.map.clear();
+        newList.forEach((data: TableColumn) => this.add(data));
+
+        return this;
+    }
+
+    public moveById = (cutId: string, toId: string): TableColumnRepository | never => {
         if (!this.map.has(cutId) || !this.map.has(toId)) {
             throw new Error("Id not found");
         }

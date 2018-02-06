@@ -28,7 +28,7 @@ describe("TableColumnRepository", () => {
     });
 
     it("Should throw error if id not found in repo on move", () => {
-        expect(() => instance.move("notId", "itsNotIdToo")).to.throw("Id not found");
+        expect(() => instance.moveById("notId", "itsNotIdToo")).to.throw("Id not found");
     });
 
     it("Should move data in repo according to args", () => {
@@ -40,11 +40,11 @@ describe("TableColumnRepository", () => {
                 Header: `Header_${i}`
             })));
 
-        instance.move("id_0", "id_3");
+        instance.moveById("id_0", "id_3");
         expect(instance.arrayList.findIndex(({ id }) => id === "id_0")).to.equal(3);
         expect(instance.arrayList.findIndex(({ id }) => id === "id_3")).to.equal(2);
 
-        instance.move("id_0", "id_3");
+        instance.moveById("id_0", "id_3");
         expect(instance.arrayList.findIndex(({ id }) => id === "id_0")).to.equal(2);
         expect(instance.arrayList.findIndex(({ id }) => id === "id_3")).to.equal(3);
     });

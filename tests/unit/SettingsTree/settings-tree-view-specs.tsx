@@ -12,7 +12,7 @@ describe("<SettingsTreeView/>", () => {
     const commonHandler = () => undefined;
     const repo = new TableColumnRepository().add(new TableColumn(ColumnData));
 
-    let saved;
+    let saved = false;
     const handleSave = () => {
         saved = true;
     };
@@ -47,13 +47,13 @@ describe("<SettingsTreeView/>", () => {
     });
 
     it("Should call `context.saveData` on move", () => {
-        (wrapper.instance() as any).handleMove(() => undefined)()
+        (wrapper.instance() as any).handleMove({oldIndex: 0, newIndex: 0});
 
         expect(saved).to.be.true;
     });
 
     it("Should call `context.onError` if error has been throwed on move", () => {
-        (wrapper.instance() as any).handleMove(() => { throw Error() })();
+        (wrapper.instance() as any).handleMove({oldIndex: -1, newIndex: -1});
 
         expect(error).to.be.true;
     });

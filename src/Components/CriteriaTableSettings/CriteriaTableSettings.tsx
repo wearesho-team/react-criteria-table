@@ -7,7 +7,7 @@ import { CriteriaTableControllerContextTypes, CriteriaTableControllerContext } f
 import { CriteriaTableSettingsProps, CriteriaTableSettingsPropTypes } from "./CriteriaTableSettingsProps";
 import { SettingsTreeView } from "../SettingsTree";
 
-@DragDropContext(TouchBackend({ enableMouseEvents: true }))
+// @DragDropContext(TouchBackend({ enableMouseEvents: true }))
 export class CriteriaTableSettings extends React.Component<CriteriaTableSettingsProps> {
     public static readonly contextTypes = CriteriaTableControllerContextTypes;
     public static readonly propTypes = CriteriaTableSettingsPropTypes;
