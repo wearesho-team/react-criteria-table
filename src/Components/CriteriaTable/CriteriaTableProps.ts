@@ -16,12 +16,14 @@ export interface CriteriaTableProps {
         rowsText?: string;
         ofText?: string;
     }
+    defaultStorageData?: any;
 }
 
 export const CriteriaTablePropTypes: {[P in keyof CriteriaTableProps]: PropTypes.Validator<any>} = {
     onFetchData: PropTypes.func.isRequired,
     onDefaults: PropTypes.func.isRequired,
-    cacheKey: PropTypes.string.isRequired
+    cacheKey: PropTypes.string.isRequired,
+    defaultStorageData: PropTypes.any
 };
 
 export const CriteriaTableDefautProps: {[P in keyof CriteriaTableProps]?: CriteriaTableProps[P]} = {
@@ -32,6 +34,7 @@ export const CriteriaTableDefautProps: {[P in keyof CriteriaTableProps]?: Criter
         pageText: "Страница",
         nextText: "Вперед",
         rowsText: "строк",
-        ofText: "из",
-    }
+        ofText: "из"
+    },
+    defaultStorageData: { list: [], total: {}, count: 0 }
 };

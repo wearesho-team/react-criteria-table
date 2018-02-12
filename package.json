@@ -28,6 +28,7 @@
   "homepage": "https://github.com/wearesho-team/react-criteria-table",
   "devDependencies": {
     "@types/chai": "^4.0.3",
+    "@types/deep-equal": "^1.0.1",
     "@types/enzyme": "^2.8.6",
     "@types/mocha": "^2.2.41",
     "@types/node": "^8.0.47",
@@ -57,9 +58,9 @@
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "react-sortable-hoc": "^0.6.8",
     "react-table": "^6.7.5",
     "react-test-renderer": "^15.6.1",
-    "react-sortable-hoc": "^0.6.8",
     "sinon": "^3.2.1",
     "source-map-loader": "^0.2.1",
     "ts-node": "^3.3.0",
@@ -72,6 +73,7 @@
   },
   "dependencies": {
     "axios": "^0.17.1",
+    "deep-equal": "^1.0.1",
     "react-sortable-hoc": "^0.6.8",
     "react-table": "^6.7.5"
   },
