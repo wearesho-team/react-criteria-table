@@ -7,12 +7,13 @@ import {
     SearchToolRequiredPropTypes,
     SearchToolRequiredDefaultProps
 } from "../SearchToolRequiredProps";
+import { BaseMatch } from "../BaseMatch";
 
 export interface StringMatchState {
     searchValue: string;
 }
 
-export class StringMatch extends React.Component<SearchToolRequiredProps, StringMatchState> {
+export class StringMatch extends BaseMatch<SearchToolRequiredProps, StringMatchState> {
     public static readonly propTypes = SearchToolRequiredPropTypes;
     public static readonly contextTypes = CriteriaTableContextTypes;
     public static readonly defaultProps = SearchToolRequiredDefaultProps;
@@ -47,7 +48,7 @@ export class StringMatch extends React.Component<SearchToolRequiredProps, String
         this.props.onFetch();
     }
 
-    private handleCreateQueries = (): Array<Condition> => ([
-        this.state.searchValue ? ["like", this.props.columnId, this.state.searchValue] : [] as Condition
+    protected handleCreateQueries = (): Array<Condition> => ([
+        ["like", this.props.columnId, this.state.searchValue || ""]
     ]);
 }
