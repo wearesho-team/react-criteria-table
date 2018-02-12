@@ -1,6 +1,6 @@
 import * as React from "react";
+import deepEqual from "deep-equal";
 import ReactTable from "react-table";
-import * as PropTypes from "prop-types";
 import axios, { CancelTokenSource } from "axios";
 
 import { TableColumn } from "../TableColumn";
@@ -9,18 +9,14 @@ import { CriteriaTableProps, CriteriaTablePropTypes, CriteriaTableDefautProps } 
 import { CriteriaTableControllerContextTypes, CriteriaTableControllerContext } from "../CriteriaTableController";
 
 export interface CriteriaTableState {
-    cancelToken?: CancelTokenSource;
-    queries: Array<Condition>;
-    data: {
-        list: Array<any>;
-        count: number;
-        total: any;
-    };
     resized?: Array<{ id: string, value: number }>;
     sorted?: Array<{ id: string, desc: boolean }>;
+    cancelToken?: CancelTokenSource;
+    queries: Array<Condition>;
     pageSize?: number;
     pages?: number;
     page?: number;
+    data: any;
 }
 
 export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaTableState> {
@@ -40,6 +36,13 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
         return {
             setQueries: this.handleSetQueries,
             getQueries: this.handleGetQueries
+        }
+    }
+
+    public componentWillUpdate(nextProps, nextState: CriteriaTableState) {
+        // Need for test environment.
+        if (deepEqual && !deepEqual(this.state.data, nextState.data)) {
+            this.context.initData(this.props.cacheKey, this.props.onDefaults(nextState)());
         }
     }
 
@@ -155,7 +158,7 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
         }
 
         return {
-            data: { list: [], total: {}, count: 0 },
+            data: this.props.defaultStorageData,
             sorted: [{ desc: false, id: "id" }],
             pageSize: 10,
             queries: [],
