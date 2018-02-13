@@ -1,31 +1,12 @@
 import * as React from "react";
-import * as PropTypes from "prop-types";
 
-import { Condition, CriteriaTableContextTypes, CriteriaTableContext } from "../../CriteriaTable";
-import {
-    SearchToolRequiredProps,
-    SearchToolRequiredPropTypes,
-    SearchToolRequiredDefaultProps
-} from "../SearchToolRequiredProps";
+import { Condition } from "../../CriteriaTable";
+import {BaseMatch, BaseMatchState} from "../BaseMatch";
 
-export interface StringMatchState {
-    searchValue: string;
-}
-
-export class StringMatch extends React.Component<SearchToolRequiredProps, StringMatchState> {
-    public static readonly propTypes = SearchToolRequiredPropTypes;
-    public static readonly contextTypes = CriteriaTableContextTypes;
-    public static readonly defaultProps = SearchToolRequiredDefaultProps;
-
-    public readonly context: CriteriaTableContext;
-
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            searchValue: ""
-        };
-    }
+export class StringMatch extends BaseMatch {
+    public state: BaseMatchState = {
+        searchValue: ""
+    };
 
     public render(): JSX.Element {
         return (
@@ -47,7 +28,7 @@ export class StringMatch extends React.Component<SearchToolRequiredProps, String
         this.props.onFetch();
     }
 
-    private handleCreateQueries = (): Array<Condition> => ([
-        this.state.searchValue ? ["like", this.props.columnId, this.state.searchValue] : [] as Condition
+    protected handleCreateQueries = (): Array<Condition> => ([
+        ["like", this.props.columnId, this.state.searchValue || ""]
     ]);
 }

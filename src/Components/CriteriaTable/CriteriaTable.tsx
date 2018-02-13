@@ -132,10 +132,8 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
         let newQueries = conditionQueries.filter((condition) => condition.length);
 
         // replace values in exist queries
-        const [oldQueries] = newQueries
-            .map((condition) => this.state.queries
-                .filter((stateCondition) => stateCondition[1] !== condition[1])
-            );
+        const oldQueries = this.state.queries
+            .filter((condition) => !newQueries.some((stateCondition) => stateCondition[1] === condition[1]));
 
         // remove queries with emtpy values
         newQueries = newQueries.filter((condition) => condition[2].toString().length);
