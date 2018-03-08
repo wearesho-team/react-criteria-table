@@ -33,6 +33,16 @@ export class BaseMatch
         matchQuery && (this.state.searchValue = matchQuery[2] as string);
     }
 
+    public componentWillUpdate(nextProps, nextState, nextContext: CriteriaTableContext) {
+        if (!nextContext.queriesList.length && this.state.searchValue) {
+            this.setState({
+                searchValue: ""
+            }, () => {
+                this.props.onFetch();
+            });
+        }
+    }
+
     protected handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
         this.state.searchValue = event.currentTarget.value;
         this.forceUpdate();

@@ -26,16 +26,15 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
     public static readonly propTypes = CriteriaTablePropTypes;
 
     public static actionDelay = 200;
-
     public readonly context: CriteriaTableControllerContext;
-
     public state: CriteriaTableState = this.cachedState;
     public timer: any;
 
     public getChildContext(): CriteriaTableContext {
         return {
             setQueries: this.handleSetQueries,
-            getQueries: this.handleGetQueries
+            getQueries: this.handleGetQueries,
+            queriesList: this.state.queries
         }
     }
 
@@ -48,10 +47,16 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
 
     public componentWillMount() {
         this.context.initData(this.props.cacheKey, this.props.onDefaults(this.state)());
+
+        this.context.bindResetQueries(this.handleResetQueries);
+        this.context.bindResetData(this.handleFetchData);
     }
 
     public componentWillUnmount() {
         this.state.cancelToken && this.state.cancelToken.cancel(`${this.props.cacheKey} will unmount`);
+
+        this.context.unbindResetQueries(this.handleResetQueries);
+        this.context.unbindResetData(this.handleFetchData);
     }
 
     public render(): JSX.Element {
@@ -143,6 +148,11 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
             ...(oldQueries || [])
         ];
 
+        this.forceUpdate();
+    }
+
+    protected handleResetQueries = (): void => {
+        this.state.queries = [];
         this.forceUpdate();
     }
 

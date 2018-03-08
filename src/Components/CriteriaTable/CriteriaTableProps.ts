@@ -5,7 +5,7 @@ import { TableColumn } from "../TableColumn";
 
 export interface CriteriaTableProps {
     onDefaults: (state: CriteriaTableState) => () => Array<Partial<TableColumn>>;
-    onFetchData: (state: Partial<CriteriaTableState>) => Promise<CriteriaTableState>;
+    onFetchData: (state: Partial<CriteriaTableState>) => Promise<Partial<CriteriaTableState>>;
     cacheKey: string;
     labels?: {
         previousText?: string;

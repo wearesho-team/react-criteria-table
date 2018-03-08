@@ -36,7 +36,7 @@ export class TableColumn {
     public setParentState: (newState: boolean) => void; // callback for `updateStateFromChild`
 
     public childColumnRepository?: TableColumnRepository; // all columns
-    private columns?: Array<TableColumn>; // array for table - only visible columns
+    public columns?: Array<Partial<TableColumn>>; // array for table - only visible columns
 
     constructor(props: Partial<TableColumn>) {
         Object.assign(this, props);
@@ -100,9 +100,9 @@ export class TableColumn {
         return this;
     }
 
-    public getVisibleColumns = (): Array<TableColumn> => this.columns || [];
+    public getVisibleColumns = (): Array<Partial<TableColumn>> => this.columns || [];
 
-    public saveData = (): Partial<TableColumn> => {
+    public saveData = (): TableColumn => {
         const self = { ...this as any };
 
         self.columns = this.childColumnsArray.map((item) => item.saveData());
