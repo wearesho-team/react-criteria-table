@@ -25,7 +25,13 @@ describe("<CriteriaTable/>", () => {
         getColumn: commonHandler,
         getCurrentData: commonHandler,
         onError: commonHandler,
-        saveData: commonHandler
+        saveData: commonHandler,
+        bindResetQueries: commonHandler,
+        bindResetData: commonHandler,
+        resetData: commonHandler,
+        resetQueries: commonHandler,
+        unbindResetQueries: commonHandler,
+        unbindResetData: commonHandler
     }
 
     beforeEach(() => {

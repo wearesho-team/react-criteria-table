@@ -9,6 +9,17 @@ export interface CriteriaTableControllerContext {
     getCurrentData: (id: string) => TableColumnRepository;
     onError: (message: string) => void;
     saveData: (id: string) => void;
+
+    // table reset control methods bindings
+    bindResetQueries: (action: () => void) => void;
+    bindResetData: (action: () => void) => void;
+
+    unbindResetQueries: (action: () => void) => void;
+    unbindResetData: (action: () => void) => void;
+
+    // binded reset control methods
+    resetQueries?: () => void;
+    resetData?: () => void;
 }
 
 export const CriteriaTableControllerContextTypes:
@@ -18,5 +29,14 @@ export const CriteriaTableControllerContextTypes:
         getColumn: PropTypes.func.isRequired,
         initData: PropTypes.func.isRequired,
         saveData: PropTypes.func.isRequired,
-        onError: PropTypes.func.isRequired
+        onError: PropTypes.func.isRequired,
+
+        bindResetData: PropTypes.func.isRequired,
+        bindResetQueries: PropTypes.func.isRequired,
+
+        unbindResetData: PropTypes.func.isRequired,
+        unbindResetQueries: PropTypes.func.isRequired,
+
+        resetData: PropTypes.func,
+        resetQueries: PropTypes.func
     };

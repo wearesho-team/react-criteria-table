@@ -38,6 +38,15 @@ export class BaseRange
         this.state.label = this.label;
     }
 
+    public componentWillUpdate(nextProps, nextState, nextContext: CriteriaTableContext) {
+        if (!nextContext.queriesList.length
+            && (this.state.label !== this.props.defaultLabel)
+        ) {
+            this.handleClear();
+            this.props.onFetch();
+        }
+    }
+
     protected handleChange = (field: any) => (event: React.ChangeEvent<HTMLInputElement>): void => {
         Object.assign(this.state, { [field]: event.currentTarget.value })
         this.forceUpdate();
@@ -53,8 +62,8 @@ export class BaseRange
     }
 
     protected handleCreateQueries = (): Array<Condition> => ([
-         [">=", this.props.columnId, this.state.from || ""],
-         ["<=", this.props.columnId, this.state.to || ""]
+        [">=", this.props.columnId, this.state.from || ""],
+        ["<=", this.props.columnId, this.state.to || ""]
     ]);
 
     protected get label(): string {

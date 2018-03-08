@@ -7,6 +7,8 @@ import { TableColumnRepository, TableColumn } from "../TableColumn";
 
 export interface CriteriaTableControllerState {
     tables: Map<string, TableColumnRepository>;
+    bindsResetData: Set<() => void>;
+    bindsResetQueries: Set<() => void>;
 }
 
 export class CriteriaTableController extends React.Component<
@@ -20,7 +22,9 @@ export class CriteriaTableController extends React.Component<
         super(props);
 
         this.state = {
-            tables: new Map()
+            tables: new Map(),
+            bindsResetData: new Set(),
+            bindsResetQueries: new Set()
         };
     }
 
@@ -31,16 +35,48 @@ export class CriteriaTableController extends React.Component<
             getColumn: this.getColumn,
             initData: this.getDefaultData,
             getCurrentData: this.getCurrentData,
-            getCurrentVisibleData: this.getCurrentVisibleData
+            getCurrentVisibleData: this.getCurrentVisibleData,
+
+            bindResetData: this.handleBindResetData,
+            bindResetQueries: this.handleBindResetQueries,
+
+            unbindResetData: this.handleUnbindResetData,
+            unbindResetQueries: this.handleUnbindResetQueries,
+
+            resetData: this.handleResetData,
+            resetQueries: this.handleResetQueries
         };
     }
 
-    public render(): JSX.Element {
+    public render(): React.ReactNode {
         return this.props.children;
     }
 
-    protected getDefaultData = (id: string, defaultData: Array<Partial<TableColumn>>): TableColumnRepository => {
-        let cachedData: Array<Partial<TableColumn>>;
+    protected handleResetData = (): void => {
+        this.state.bindsResetData.forEach((action) => action());
+    }
+    protected handleResetQueries = (): void => {
+        this.state.bindsResetQueries.forEach((action) => action());
+    }
+
+    protected handleUnbindResetData = (action: () => void): void => {
+        this.state.bindsResetData.delete(action);
+    }
+
+    protected handleUnbindResetQueries = (action: () => void): void => {
+        this.state.bindsResetQueries.delete(action);
+    }
+
+    protected handleBindResetData = (action: () => void): void => {
+        this.state.bindsResetData.add(action);
+    }
+
+    protected handleBindResetQueries = (action: () => void): void => {
+        this.state.bindsResetQueries.add(action);
+    }
+
+    protected getDefaultData = (id: string, defaultData: Array<TableColumn>): TableColumnRepository => {
+        let cachedData: Array<TableColumn>;
         const instanceData = new TableColumnRepository();
 
         try {
@@ -95,8 +131,8 @@ export class CriteriaTableController extends React.Component<
     }
 
     private mergeData = (
-        cachedData: Array<Partial<TableColumn>>,
-        defaultData: Array<Partial<TableColumn>>): Array<TableColumn> => (
+        cachedData: Array<TableColumn>,
+        defaultData: Array<TableColumn>): Array<TableColumn> => (
             cachedData.map((item: TableColumn) => {
                 const subtractedData = defaultData.find(({ id }) => id === item.id);
                 return subtractedData && item.subtractData(subtractedData);
@@ -104,8 +140,8 @@ export class CriteriaTableController extends React.Component<
         );
 
     private instantiateData = (
-        cachedData: Array<Partial<TableColumn>>,
-        defaultData: Array<Partial<TableColumn>>): Array<TableColumn> => (
+        cachedData: Array<TableColumn>,
+        defaultData: Array<TableColumn>): Array<TableColumn> => (
             (!cachedData || !cachedData.length)
                 ? defaultData.map((item: Partial<TableColumn>) => new TableColumn(item))
                 : this.mergeData(
