@@ -11,7 +11,7 @@ export const BaseControlPropTypes: {[P in keyof BaseControlProps]: PropTypes.Val
     tableId: PropTypes.string.isRequired
 };
 
-export class BaseControl<
+export abstract class BaseControl<
     TProps extends BaseControlProps = BaseControlProps,
     TState = {}
     > extends React.Component<TProps, TState> {
@@ -20,9 +20,7 @@ export class BaseControl<
 
     public readonly context: CriteriaTableControllerContext;
 
-    public get controlAction() {
-        return undefined;
-    }
+    public abstract get controlAction();
 
     public render(): React.ReactNode {
         const { tableId, ...buttonProps } = this.props as BaseControlProps;
