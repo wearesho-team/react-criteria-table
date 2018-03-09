@@ -1,6 +1,7 @@
 import * as PropTypes from "prop-types";
 
 import { TableColumnRepository, TableColumn } from "../TableColumn";
+import { ControlActions } from "../CriteriaTable";
 
 export interface CriteriaTableControllerContext {
     initData: (id: string, data: Array<Partial<TableColumn>>) => TableColumnRepository;
@@ -10,16 +11,9 @@ export interface CriteriaTableControllerContext {
     onError: (message: string) => void;
     saveData: (id: string) => void;
 
-    // table reset control methods bindings
-    bindResetQueries: (action: () => void) => void;
-    bindResetData: (action: () => void) => void;
-
-    unbindResetQueries: (action: () => void) => void;
-    unbindResetData: (action: () => void) => void;
-
-    // binded reset control methods
-    resetQueries?: () => void;
-    resetData?: () => void;
+    getControlAction: (tableId: string, actionName: ControlActions) => () => any;
+    bindControlAction: (tableId: string, actionName: ControlActions, action: (...args) => void) => void;
+    unbindControlAction: (tableId: string, actionName: ControlActions) => void;
 }
 
 export const CriteriaTableControllerContextTypes:
@@ -31,12 +25,7 @@ export const CriteriaTableControllerContextTypes:
         saveData: PropTypes.func.isRequired,
         onError: PropTypes.func.isRequired,
 
-        bindResetData: PropTypes.func.isRequired,
-        bindResetQueries: PropTypes.func.isRequired,
-
-        unbindResetData: PropTypes.func.isRequired,
-        unbindResetQueries: PropTypes.func.isRequired,
-
-        resetData: PropTypes.func,
-        resetQueries: PropTypes.func
+        getControlAction: PropTypes.func.isRequired,
+        bindControlAction: PropTypes.func.isRequired,
+        unbindControlAction: PropTypes.func.isRequired,
     };

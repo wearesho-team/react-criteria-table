@@ -23,7 +23,7 @@ export const CriteriaTablePropTypes: {[P in keyof CriteriaTableProps]: PropTypes
     onFetchData: PropTypes.func.isRequired,
     onDefaults: PropTypes.func.isRequired,
     cacheKey: PropTypes.string.isRequired,
-    defaultStorageData: PropTypes.any
+    defaultStorageData: PropTypes.any,
 };
 
 export const CriteriaTableDefautProps: {[P in keyof CriteriaTableProps]?: CriteriaTableProps[P]} = {

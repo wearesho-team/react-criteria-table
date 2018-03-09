@@ -56,7 +56,7 @@ export class SettingsTreeItem extends React.Component<SettingsTreeItemProps, Set
         return (
             <React.Fragment>
                 <i className={className} onClick={this.handleDropDownClick} />
-                <span className="jqtree-title jqtree_common jqtree-title-folder">
+                <span className="jqtree-title jqtree_common">
                     {this.header}
                 </span>
             </React.Fragment>

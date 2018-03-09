@@ -18,6 +18,6 @@ export class CriteriaTableSettings extends React.Component<CriteriaTableSettings
             return null;
         }
 
-        return <SettingsTreeView childList={SettingsChildList} {...this.props} />
+        return <SettingsTreeView childList={SettingsChildList} {...this.props} />;
     }
 }

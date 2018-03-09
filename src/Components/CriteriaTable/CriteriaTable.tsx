@@ -17,7 +17,18 @@ export interface CriteriaTableState {
     pages?: number;
     page?: number;
     data: any;
+
+    autoFetch?: boolean;
+    autoFetchDelay?: number;
 }
+
+export enum ControlActions {
+    getAutoFetchParams = "getAutoFetchParams",
+    setAutoFetchState = "setAutoFetchState",
+    setAutoFetchDelay = "setAutoFetchDelay",
+    resetQueries = "resetQueries",
+    resetData = "resetData",
+};
 
 export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaTableState> {
     public static readonly contextTypes = CriteriaTableControllerContextTypes;
@@ -25,10 +36,17 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
     public static readonly defaultProps = CriteriaTableDefautProps;
     public static readonly propTypes = CriteriaTablePropTypes;
 
+    public static readonly AutoFetchDefaultParams = {
+        autoFetch: true,
+        autoFetchDelay: 60000
+    }
+
     public static actionDelay = 200;
     public readonly context: CriteriaTableControllerContext;
     public state: CriteriaTableState = this.cachedState;
-    public timer: any;
+
+    public fetchControlTimeoutId: any;
+    public autoFetchTimeoutId: any;
 
     public getChildContext(): CriteriaTableContext {
         return {
@@ -38,25 +56,44 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
         }
     }
 
-    public componentWillUpdate(nextProps, nextState: CriteriaTableState) {
-        // Need for test environment.
-        if (deepEqual && !deepEqual(this.state.data, nextState.data)) {
-            this.context.initData(this.props.cacheKey, this.props.onDefaults(nextState)());
+    public componentDidUpdate(prevProps, prevState: CriteriaTableState) {
+        // `deepEqual &&` is needed for test environment.
+        if (deepEqual && !deepEqual(this.state.data, prevState.data)) {
+            this.context.initData(this.props.cacheKey, this.props.onDefaults(this.state)());
+        }
+
+        if (this.state.autoFetch && !prevState.autoFetch
+            || (this.state.autoFetch && (prevState.autoFetchDelay !== this.state.autoFetchDelay))
+        ) {
+            this.startAutoFetch();
+        } else if (!this.state.autoFetch && prevState.autoFetch) {
+            clearTimeout(this.autoFetchTimeoutId);
         }
     }
 
     public componentWillMount() {
         this.context.initData(this.props.cacheKey, this.props.onDefaults(this.state)());
 
-        this.context.bindResetQueries(this.handleResetQueries);
-        this.context.bindResetData(this.handleFetchData);
+        this.context.bindControlAction(this.props.cacheKey, ControlActions.resetData, this.handleResetData);
+        this.context.bindControlAction(this.props.cacheKey, ControlActions.resetQueries, this.handleResetQueries);
+        this.context.bindControlAction(this.props.cacheKey, ControlActions.setAutoFetchDelay, this.setAutoFetchDelay);
+        this.context.bindControlAction(this.props.cacheKey, ControlActions.setAutoFetchState, this.setAutoFetchState);
+        this.context.bindControlAction(this.props.cacheKey, ControlActions.getAutoFetchParams, this.getAutoFetchParams);
+
+        this.state.autoFetch && this.startAutoFetch();
     }
 
     public componentWillUnmount() {
         this.state.cancelToken && this.state.cancelToken.cancel(`${this.props.cacheKey} will unmount`);
 
-        this.context.unbindResetQueries(this.handleResetQueries);
-        this.context.unbindResetData(this.handleFetchData);
+        this.context.unbindControlAction(this.props.cacheKey, ControlActions.resetData);
+        this.context.unbindControlAction(this.props.cacheKey, ControlActions.resetQueries);
+        this.context.unbindControlAction(this.props.cacheKey, ControlActions.setAutoFetchDelay);
+        this.context.unbindControlAction(this.props.cacheKey, ControlActions.setAutoFetchState);
+        this.context.unbindControlAction(this.props.cacheKey, ControlActions.getAutoFetchParams);
+
+        clearTimeout(this.fetchControlTimeoutId);
+        clearTimeout(this.autoFetchTimeoutId);
     }
 
     public render(): JSX.Element {
@@ -75,12 +112,36 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
         );
     }
 
+    protected startAutoFetch = (): void => {
+        clearTimeout(this.autoFetchTimeoutId);
+        this.autoFetchTimeoutId = setTimeout(() => {
+            this.fetchDataControl();
+            this.startAutoFetch();
+        }, this.state.autoFetchDelay);
+    }
+
     protected fetchDataControl = (): void => {
-        clearTimeout(this.timer);
+        clearTimeout(this.fetchControlTimeoutId);
         this.state.cancelToken && this.state.cancelToken.cancel();
         this.state.cancelToken = axios.CancelToken.source();
+        this.forceUpdate();
 
-        this.timer = setTimeout(() => this.handleFetchData(), CriteriaTable.actionDelay);
+        this.fetchControlTimeoutId = setTimeout(this.handleFetchData, CriteriaTable.actionDelay);
+    }
+
+    protected setAutoFetchDelay = (autoFetchDelay: number): void => {
+        this.setState({ autoFetchDelay });
+    }
+
+    protected setAutoFetchState = (autoFetch: boolean): void => {
+        this.setState({ autoFetch });
+    }
+
+    protected getAutoFetchParams = (): { delay: number, enabled: boolean } => {
+        return {
+            delay: this.state.autoFetchDelay,
+            enabled: this.state.autoFetch
+        };
     }
 
     protected handlePageSizeChange = (pageSize: number): void => {
@@ -97,8 +158,8 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
     protected handleResized = (resized: Array<{ id: string, value: number }>): void => {
         this.setState({ resized });
 
-        clearTimeout(this.timer);
-        this.timer = setTimeout(() => this.saveData(), CriteriaTable.actionDelay);
+        clearTimeout(this.fetchControlTimeoutId);
+        this.fetchControlTimeoutId = setTimeout(this.saveData, CriteriaTable.actionDelay);
     };
 
     protected handlePageChange = (page: number): void => this.setState({ page });
@@ -110,8 +171,8 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
         try {
             response = await this.props.onFetchData({
                 cancelToken: this.state.cancelToken,
-                queries: this.state.queries,
                 pageSize: this.state.pageSize,
+                queries: this.state.queries,
                 sorted: this.state.sorted,
                 page: this.state.page
             });
@@ -130,6 +191,19 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
         }));
 
         this.saveData();
+    }
+
+    protected handleResetData = (): void => {
+        // need to remove autoFetch timer when user trigger fetch manually
+        clearTimeout(this.autoFetchTimeoutId);
+        this.fetchDataControl();
+
+        this.state.autoFetch && this.startAutoFetch();
+    }
+
+    protected handleResetQueries = (): void => {
+        this.state.queries = [];
+        this.forceUpdate();
     }
 
     protected handleSetQueries = (conditionQueries: Array<Condition>): void => {
@@ -151,11 +225,6 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
         this.forceUpdate();
     }
 
-    protected handleResetQueries = (): void => {
-        this.state.queries = [];
-        this.forceUpdate();
-    }
-
     protected saveData = (): void => window.localStorage.setItem(this.props.cacheKey, JSON.stringify(this.state));
 
     protected get cachedState(): CriteriaTableState {
@@ -172,7 +241,8 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
             queries: [],
             resized: [],
             pages: 1,
-            page: 0
+            page: 0,
+            ...CriteriaTable.AutoFetchDefaultParams
         };
     }
 
@@ -197,3 +267,4 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
         }
     }
 }
+// tslint:disable-next-line
