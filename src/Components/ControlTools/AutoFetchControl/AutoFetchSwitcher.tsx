@@ -1,13 +1,18 @@
 import * as React from "react";
 
-import { BaseControl, BaseControlProps } from "../BaseControl";
 import { CriteriaTable, ControlActions } from "../../CriteriaTable";
+import { BaseControlProps, BaseControlPropTypes } from "../BaseControl";
+import { CriteriaTableControllerContext, CriteriaTableControllerContextTypes } from "../../CriteriaTableController"
 
 export interface AutoFetchSwitcherState {
     enabled: boolean
 }
 
-export class AutoFetchSwitcher extends BaseControl<BaseControlProps, AutoFetchSwitcherState> {
+export class AutoFetchSwitcher extends React.Component<BaseControlProps, AutoFetchSwitcherState> {
+    public static readonly propTypes = BaseControlPropTypes;
+    public static readonly contextTypes = CriteriaTableControllerContextTypes;
+
+    public readonly context: CriteriaTableControllerContext;
     public readonly state: AutoFetchSwitcherState = {
         enabled: CriteriaTable.AutoFetchDefaultParams.autoFetch,
     };

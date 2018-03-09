@@ -20,7 +20,7 @@ export abstract class BaseControl<
 
     public readonly context: CriteriaTableControllerContext;
 
-    public abstract get controlAction();
+    public abstract get controlAction(): () => void;
 
     public render(): React.ReactNode {
         const { tableId, ...buttonProps } = this.props as BaseControlProps;

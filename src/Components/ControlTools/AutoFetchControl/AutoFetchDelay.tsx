@@ -1,13 +1,18 @@
 import * as React from "react";
 
-import { BaseControl, BaseControlProps } from "../BaseControl";
 import { ControlActions, CriteriaTable } from "../../CriteriaTable";
+import { BaseControlProps, BaseControlPropTypes } from "../BaseControl";
+import { CriteriaTableControllerContext, CriteriaTableControllerContextTypes } from "../../CriteriaTableController"
 
 export interface AutoFetchDelayState {
     delay: number;
 }
 
-export class AutoFetchDelay extends BaseControl<BaseControlProps, AutoFetchDelayState> {
+export class AutoFetchDelay extends React.Component<BaseControlProps, AutoFetchDelayState> {
+    public static readonly propTypes = BaseControlPropTypes;
+    public static readonly contextTypes = CriteriaTableControllerContextTypes;
+
+    public readonly context: CriteriaTableControllerContext;
     public readonly state: AutoFetchDelayState = {
         delay: CriteriaTable.AutoFetchDefaultParams.autoFetchDelay,
     };
