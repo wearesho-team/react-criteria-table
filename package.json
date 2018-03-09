@@ -1,6 +1,6 @@
 {
   "name": "react-criteria-table",
-  "version": "1.3.0",
+  "version": "1.5.0",
   "description": "Wrapper for ReactTable",
   "main": "build/index.js",
   "typings": "build/src/index.d.ts",
