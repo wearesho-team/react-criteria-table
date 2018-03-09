@@ -48,6 +48,31 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
     public fetchControlTimeoutId: any;
     public autoFetchTimeoutId: any;
 
+    public get bindMap() {
+        return [
+            {
+                actionName: ControlActions.resetData,
+                action: this.handleResetData
+            },
+            {
+                actionName: ControlActions.resetQueries,
+                action: this.handleResetQueries
+            },
+            {
+                actionName: ControlActions.setAutoFetchDelay,
+                action: this.setAutoFetchDelay
+            },
+            {
+                actionName: ControlActions.setAutoFetchState,
+                action: this.setAutoFetchState
+            },
+            {
+                actionName: ControlActions.getAutoFetchParams,
+                action: this.getAutoFetchParams
+            }
+        ];
+    }
+
     public getChildContext(): CriteriaTableContext {
         return {
             setQueries: this.handleSetQueries,
@@ -74,11 +99,8 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
     public componentWillMount() {
         this.context.initData(this.props.cacheKey, this.props.onDefaults(this.state)());
 
-        this.context.bindControlAction(this.props.cacheKey, ControlActions.resetData, this.handleResetData);
-        this.context.bindControlAction(this.props.cacheKey, ControlActions.resetQueries, this.handleResetQueries);
-        this.context.bindControlAction(this.props.cacheKey, ControlActions.setAutoFetchDelay, this.setAutoFetchDelay);
-        this.context.bindControlAction(this.props.cacheKey, ControlActions.setAutoFetchState, this.setAutoFetchState);
-        this.context.bindControlAction(this.props.cacheKey, ControlActions.getAutoFetchParams, this.getAutoFetchParams);
+        this.bindMap.forEach(({ actionName, action }) =>
+            this.context.bindControlAction(this.props.cacheKey, actionName, action));
 
         this.state.autoFetch && this.startAutoFetch();
     }
@@ -86,11 +108,8 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
     public componentWillUnmount() {
         this.state.cancelToken && this.state.cancelToken.cancel(`${this.props.cacheKey} will unmount`);
 
-        this.context.unbindControlAction(this.props.cacheKey, ControlActions.resetData);
-        this.context.unbindControlAction(this.props.cacheKey, ControlActions.resetQueries);
-        this.context.unbindControlAction(this.props.cacheKey, ControlActions.setAutoFetchDelay);
-        this.context.unbindControlAction(this.props.cacheKey, ControlActions.setAutoFetchState);
-        this.context.unbindControlAction(this.props.cacheKey, ControlActions.getAutoFetchParams);
+        this.bindMap.forEach(({ actionName }) =>
+            this.context.unbindControlAction(this.props.cacheKey, actionName));
 
         clearTimeout(this.fetchControlTimeoutId);
         clearTimeout(this.autoFetchTimeoutId);
