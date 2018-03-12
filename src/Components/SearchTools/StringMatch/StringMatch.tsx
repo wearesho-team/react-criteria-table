@@ -21,7 +21,7 @@ export class StringMatch extends BaseMatch {
     }
 
     protected handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        Object.assign(this.state, { searchValue: event.currentTarget.value })
+        Object.assign(this.state, { searchValue: event.currentTarget.value });
         this.forceUpdate();
 
         this.context.setQueries(this.handleCreateQueries());
