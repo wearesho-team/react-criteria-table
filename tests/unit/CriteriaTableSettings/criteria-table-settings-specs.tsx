@@ -20,12 +20,9 @@ describe("<CriteriaTableSettings/>", () => {
         getCurrentData: commonHandler,
         onError: commonHandler,
         saveData: commonHandler,
-        bindResetQueries: commonHandler,
-        bindResetData: commonHandler,
-        resetData: commonHandler,
-        resetQueries: commonHandler,
-        unbindResetQueries: commonHandler,
-        unbindResetData: commonHandler
+        getControlAction: commonHandler,
+        bindControlAction: commonHandler,
+        unbindControlAction: commonHandler,
     };
 
     beforeEach(() => {

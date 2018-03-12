@@ -4,11 +4,11 @@ import * as PropTypes from "prop-types";
 import { CriteriaTableControllerContextTypes, CriteriaTableControllerContext } from "./CriteriaTableControllerContext";
 import { CriteriaTableControllerProps } from "./CriteriaTableControllerProps";
 import { TableColumnRepository, TableColumn } from "../TableColumn";
+import { ControlActions } from "../..";
 
 export interface CriteriaTableControllerState {
     tables: Map<string, TableColumnRepository>;
-    bindsResetData: Set<() => void>;
-    bindsResetQueries: Set<() => void>;
+    controlActionBinds: Map<string, Map<string, () => void>>;
 }
 
 export class CriteriaTableController extends React.Component<
@@ -23,8 +23,7 @@ export class CriteriaTableController extends React.Component<
 
         this.state = {
             tables: new Map(),
-            bindsResetData: new Set(),
-            bindsResetQueries: new Set()
+            controlActionBinds: new Map()
         };
     }
 
@@ -37,14 +36,9 @@ export class CriteriaTableController extends React.Component<
             getCurrentData: this.getCurrentData,
             getCurrentVisibleData: this.getCurrentVisibleData,
 
-            bindResetData: this.handleBindResetData,
-            bindResetQueries: this.handleBindResetQueries,
-
-            unbindResetData: this.handleUnbindResetData,
-            unbindResetQueries: this.handleUnbindResetQueries,
-
-            resetData: this.handleResetData,
-            resetQueries: this.handleResetQueries
+            getControlAction: this.getControlAction,
+            bindControlAction: this.handleBindControlAction,
+            unbindControlAction: this.handleUnbindControlAction
         };
     }
 
@@ -52,27 +46,33 @@ export class CriteriaTableController extends React.Component<
         return this.props.children;
     }
 
-    protected handleResetData = (): void => {
-        this.state.bindsResetData.forEach((action) => action());
-    }
-    protected handleResetQueries = (): void => {
-        this.state.bindsResetQueries.forEach((action) => action());
+    protected handleBindControlAction = (tableId: string, actionName: ControlActions, action: () => void): void => {
+        if (!this.state.controlActionBinds.has(tableId)) {
+            this.state.controlActionBinds.set(tableId, new Map());
+        }
+
+        this.state.controlActionBinds.get(tableId).set(actionName, action);
+        this.forceUpdate();
     }
 
-    protected handleUnbindResetData = (action: () => void): void => {
-        this.state.bindsResetData.delete(action);
+    protected handleUnbindControlAction = (tableId: string, actionName: ControlActions): void => {
+        if (!this.state.controlActionBinds.has(tableId)) {
+            return;
+        }
+
+        this.state.controlActionBinds.get(tableId).delete(actionName);
+        if (!this.state.controlActionBinds.get(tableId).size) {
+            this.state.controlActionBinds.delete(tableId);
+        }
+        this.forceUpdate();
     }
 
-    protected handleUnbindResetQueries = (action: () => void): void => {
-        this.state.bindsResetQueries.delete(action);
-    }
+    protected getControlAction = (tableId: string, actionName: ControlActions) => {
+        if (!this.state.controlActionBinds.has(tableId)) {
+            return;
+        }
 
-    protected handleBindResetData = (action: () => void): void => {
-        this.state.bindsResetData.add(action);
-    }
-
-    protected handleBindResetQueries = (action: () => void): void => {
-        this.state.bindsResetQueries.add(action);
+        return this.state.controlActionBinds.get(tableId).get(actionName);
     }
 
     protected getDefaultData = (id: string, defaultData: Array<TableColumn>): TableColumnRepository => {
