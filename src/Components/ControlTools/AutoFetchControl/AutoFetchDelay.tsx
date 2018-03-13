@@ -1,8 +1,8 @@
 import * as React from "react";
 
-import { ControlActions, CriteriaTable } from "../../CriteriaTable";
+import { CriteriaTableControllerContext, CriteriaTableControllerContextTypes } from "../../CriteriaTableController";
+import { ControlActions, CriteriaTableDefautProps } from "../../CriteriaTable";
 import { BaseControlProps, BaseControlPropTypes } from "../BaseControl";
-import { CriteriaTableControllerContext, CriteriaTableControllerContextTypes } from "../../CriteriaTableController"
 
 export interface AutoFetchDelayState {
     delay: number;
@@ -14,11 +14,11 @@ export class AutoFetchDelay extends React.Component<BaseControlProps, AutoFetchD
 
     public readonly context: CriteriaTableControllerContext;
     public readonly state: AutoFetchDelayState = {
-        delay: CriteriaTable.AutoFetchDefaultParams.autoFetchDelay,
+        delay: CriteriaTableDefautProps.autoFetchDelay
     };
 
     public get controlAction(): ((delay: number) => void) {
-        return this.context.getControlAction(this.props.tableId, ControlActions.setAutoFetchDelay)
+        return this.context.getControlAction(this.props.tableId, ControlActions.setAutoFetchDelay);
     }
 
     public componentDidMount() {
@@ -40,8 +40,8 @@ export class AutoFetchDelay extends React.Component<BaseControlProps, AutoFetchD
                 type="tel"
                 {...inputProps}
                 value={this.state.delay}
-                onChange={this.handleInputChange}
                 onBlur={this.handleInputBlur}
+                onChange={this.handleInputChange}
             />
         );
     }

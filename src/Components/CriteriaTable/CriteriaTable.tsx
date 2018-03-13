@@ -36,11 +36,6 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
     public static readonly defaultProps = CriteriaTableDefautProps;
     public static readonly propTypes = CriteriaTablePropTypes;
 
-    public static readonly AutoFetchDefaultParams = {
-        autoFetch: true,
-        autoFetchDelay: 60000
-    }
-
     public static actionDelay = 200;
     public readonly context: CriteriaTableControllerContext;
     public state: CriteriaTableState = this.cachedState;
@@ -126,12 +121,13 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
                 manual
                 {...this.controlledStateCallbacks}
                 {...this.controlledStateOverrides}
-                {...this.props.labels}
+                {...this.labels}
             />
         );
     }
 
     protected startAutoFetch = (): void => {
+        // This method gives more control than `setInterval`
         clearTimeout(this.autoFetchTimeoutId);
         this.autoFetchTimeoutId = setTimeout(() => {
             this.fetchDataControl();
@@ -253,16 +249,39 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
             return cached;
         }
 
+        // Store object as non requireable prop in props is bad idea
+        const defaultFields = {} as CriteriaTableState;
+        [
+            "autoFetchDelay",
+            "autoFetch",
+            "pageSize",
+            "sorted",
+            "pages",
+            "page",
+            "data"
+        ].forEach((key) => defaultFields[key] = this.props[key]);
+
         return {
-            data: this.props.defaultStorageData,
-            sorted: [{ desc: false, id: "id" }],
-            pageSize: 10,
+            ...defaultFields,
             queries: [],
-            resized: [],
-            pages: 1,
-            page: 0,
-            ...CriteriaTable.AutoFetchDefaultParams
+            resized: []
         };
+    }
+
+    protected get labels() {
+        // Store object as non requireable prop in props is bad idea
+        const defaultFields = {};
+        [
+            "previousText",
+            "loadingText",
+            "noDataText",
+            "pageText",
+            "nextText",
+            "rowsText",
+            "ofText"
+        ].forEach((key) => defaultFields[key] = this.props[key]);
+
+        return defaultFields;
     }
 
     protected get controlledStateCallbacks() {
