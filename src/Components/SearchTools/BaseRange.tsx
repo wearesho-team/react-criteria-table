@@ -38,10 +38,8 @@ export class BaseRange
         this.state.label = this.label;
     }
 
-    public componentWillUpdate(nextProps, nextState, nextContext: CriteriaTableContext) {
-        if (!nextContext.queriesList.length
-            && (this.state.label !== this.props.defaultLabel)
-        ) {
+    public componentDidUpdate() {
+        if (this.shouldReset) {
             this.handleClear();
             this.props.onFetch();
         }
@@ -80,6 +78,15 @@ export class BaseRange
             label = this.props.defaultLabel;
         }
 
-        return label;
+        return label.trim();
+    }
+
+    private get shouldReset(): boolean {
+        return (
+            !this.context.queriesList.length
+            && (this.state.label !== this.props.defaultLabel)
+            && !this.state.from
+            && !this.state.to
+        );
     }
 }
