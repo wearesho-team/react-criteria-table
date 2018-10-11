@@ -2,7 +2,11 @@ import * as React from "react";
 import * as PropTypes from "prop-types";
 
 import { CriteriaTableControllerContextTypes, CriteriaTableControllerContext } from "./CriteriaTableControllerContext";
-import { CriteriaTableControllerProps } from "./CriteriaTableControllerProps";
+import {
+    CriteriaTableControllerDefaultProps,
+    CriteriaTableControllerProps,
+    CriteriaTableControllerPropTypes
+} from "./CriteriaTableControllerProps";
 import { TableColumnRepository, TableColumn } from "../TableColumn";
 import { ControlActions } from "../..";
 
@@ -15,6 +19,8 @@ export class CriteriaTableController extends React.Component<
     CriteriaTableControllerProps, CriteriaTableControllerState
     > {
     public static readonly childContextTypes = CriteriaTableControllerContextTypes;
+    public static readonly propTypes = CriteriaTableControllerPropTypes;
+    public static readonly defaultProps = CriteriaTableControllerDefaultProps;
 
     private readonly cacheSuffix = "-settings";
 
@@ -110,6 +116,10 @@ export class CriteriaTableController extends React.Component<
     }
 
     protected saveData = (id: string): void => {
+        if (!this.props.enableCaching) {
+            return;
+        }
+
         window.localStorage.setItem(
             this.getCacheKey(id),
             JSON.stringify(this.getCurrentData(id).arrayList.map((item: TableColumn) => item.saveData()))

@@ -146,4 +146,26 @@ describe("<CriteriaTableController/>", () => {
 
         expect(savedData).to.equal(JSON.stringify([ColumnData]));
     });
+
+    it("Should not put data to localStorage on save with flag `enableCaching=false`", () => {
+        wrapper = mount(
+            <CriteriaTableController onError={handleError} enableCaching={false}>
+                <div />
+            </CriteriaTableController>
+        );
+
+        instance = wrapper.instance() as CriteriaTableController;
+        instance.getChildContext().initData("someKey", [ColumnData]);
+
+        let savedData;
+        (window as any).localStorage = {
+            setItem: (key, data) => {
+                savedData = data;
+            }
+        }
+
+        instance.getChildContext().saveData("someKey");
+
+        expect(savedData).to.be.undefined;
+    })
 });
