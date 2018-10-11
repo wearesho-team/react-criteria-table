@@ -44,7 +44,9 @@ export class CriteriaTableController extends React.Component<
 
             getControlAction: this.getControlAction,
             bindControlAction: this.handleBindControlAction,
-            unbindControlAction: this.handleUnbindControlAction
+            unbindControlAction: this.handleUnbindControlAction,
+
+            enableCaching: this.props.enableCaching,
         };
     }
 
