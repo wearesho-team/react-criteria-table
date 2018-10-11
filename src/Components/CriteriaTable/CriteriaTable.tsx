@@ -240,7 +240,9 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
         this.forceUpdate();
     }
 
-    protected saveData = (): void => window.localStorage.setItem(this.props.cacheKey, JSON.stringify(this.state));
+    protected saveData = (): void => {
+        this.context.enableCaching && window.localStorage.setItem(this.props.cacheKey, JSON.stringify(this.state));
+    }
 
     protected get cachedState(): CriteriaTableState {
         const cached = JSON.parse(window.localStorage.getItem(this.props.cacheKey));

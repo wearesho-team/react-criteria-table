@@ -29,6 +29,7 @@ describe("<CriteriaTable/>", () => {
         getControlAction: commonHandler,
         bindControlAction: commonHandler,
         unbindControlAction: commonHandler,
+        enableCaching: true,
     }
 
     beforeEach(() => {
@@ -83,6 +84,26 @@ describe("<CriteriaTable/>", () => {
                 count: 1,
             }
         }));
+
+        expect(JSON.stringify(wrapper.state().data)).to.equal(JSON.stringify({
+            value: "wow",
+            count: 1,
+        }));
+    });
+
+    it("Should not save data to localStorage on `enableCaching=false`", async () => {
+        wrapper.setContext({ enableCaching: false });
+
+        let savedData;
+        Object.assign((window as any).localStorage, {
+            setItem: (key, data) => {
+                savedData = data;
+            }
+        });
+
+        await (wrapper.instance() as any).handleFetchData();
+
+        expect(savedData).to.be.undefined;
 
         expect(JSON.stringify(wrapper.state().data)).to.equal(JSON.stringify({
             value: "wow",
