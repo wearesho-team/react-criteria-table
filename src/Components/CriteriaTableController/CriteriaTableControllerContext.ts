@@ -14,6 +14,8 @@ export interface CriteriaTableControllerContext {
     getControlAction: (tableId: string, actionName: ControlActions) => () => any;
     bindControlAction: (tableId: string, actionName: ControlActions, action: (...args) => void) => void;
     unbindControlAction: (tableId: string, actionName: ControlActions) => void;
+
+    enableCaching: boolean;
 }
 
 export const CriteriaTableControllerContextTypes:
@@ -28,4 +30,6 @@ export const CriteriaTableControllerContextTypes:
         getControlAction: PropTypes.func.isRequired,
         bindControlAction: PropTypes.func.isRequired,
         unbindControlAction: PropTypes.func.isRequired,
+
+        enableCaching: PropTypes.bool.isRequired,
     };
