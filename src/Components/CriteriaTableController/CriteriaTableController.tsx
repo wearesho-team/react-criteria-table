@@ -118,10 +118,6 @@ export class CriteriaTableController extends React.Component<
     }
 
     protected saveData = (id: string): void => {
-        if (!this.props.enableCaching) {
-            return;
-        }
-
         window.localStorage.setItem(
             this.getCacheKey(id),
             JSON.stringify(this.getCurrentData(id).arrayList.map((item: TableColumn) => item.saveData()))

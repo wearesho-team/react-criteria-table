@@ -103,7 +103,8 @@ describe("<CriteriaTable/>", () => {
 
         await (wrapper.instance() as any).handleFetchData();
 
-        expect(savedData).to.be.undefined;
+        expect(savedData).not.to.be.undefined;
+        expect(JSON.stringify(JSON.parse(savedData).data)).to.equal("[]");
 
         expect(JSON.stringify(wrapper.state().data)).to.equal(JSON.stringify({
             value: "wow",
