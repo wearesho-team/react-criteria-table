@@ -242,8 +242,11 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
 
     protected saveData = (): void => {
         const data = {...this.state};
-        if (!this.context.enableCaching) {
-            data.data = [];
+
+        delete data.cancelToken;
+
+        if (!this.context.enableCaching && data.data) {
+            delete data.data.list;
         }
 
         window.localStorage.setItem(this.props.cacheKey, JSON.stringify(data));
