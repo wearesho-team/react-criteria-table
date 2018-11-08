@@ -241,7 +241,7 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
     }
 
     protected saveData = (): void => {
-        const data = {...this.state};
+        const data = JSON.parse(JSON.stringify(this.state));
 
         delete data.cancelToken;
 

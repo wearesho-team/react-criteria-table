@@ -115,6 +115,7 @@ describe("<CriteriaTable/>", () => {
         expect(JSON.stringify(wrapper.state().data)).to.equal(JSON.stringify({
             value: "wow",
             count: 1,
+            list: [],
         }));
     });
 
