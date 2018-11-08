@@ -13,6 +13,7 @@ describe("<CriteriaTable/>", () => {
             data: {
                 value: "wow",
                 count: 1,
+                list: [],
             }
         }
     };
@@ -82,12 +83,14 @@ describe("<CriteriaTable/>", () => {
             data: {
                 value: "wow",
                 count: 1,
+                list: [],
             }
         }));
 
         expect(JSON.stringify(wrapper.state().data)).to.equal(JSON.stringify({
             value: "wow",
             count: 1,
+            list: [],
         }));
     });
 
@@ -104,11 +107,15 @@ describe("<CriteriaTable/>", () => {
         await (wrapper.instance() as any).handleFetchData();
 
         expect(savedData).not.to.be.undefined;
-        expect(JSON.stringify(JSON.parse(savedData).data)).to.equal("[]");
+        expect(JSON.stringify(JSON.parse(savedData).data)).to.equal(JSON.stringify({
+            value: "wow",
+            count: 1,
+        }));
 
         expect(JSON.stringify(wrapper.state().data)).to.equal(JSON.stringify({
             value: "wow",
             count: 1,
+            list: [],
         }));
     });
 
