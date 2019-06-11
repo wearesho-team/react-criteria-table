@@ -40,20 +40,7 @@ const config = {
                 {
                     test: /\.tsx?$/,
                     loaders: [
-                        {
-                            loader: "babel-loader",
-                            query: {
-                                presets: [
-                                    'react',
-                                    ['env', {
-                                        "targets": {
-                                            "browsers": ["last 2 versions", "safari >= 10", "ie >= 11"]
-                                        }
-                                    }]
-                                ],
-                                "plugins": ["transform-object-rest-spread"]
-                            }
-                        },
+                        "babel-loader",
                         "awesome-typescript-loader"
                     ]
                 },
@@ -63,17 +50,6 @@ const config = {
                         [/node_modules/],
                     loader:
                         "babel-loader",
-                    query: {
-                        presets: [
-                            'react',
-                            ['env', {
-                                "targets": {
-                                    "browsers": ["last 2 versions", "safari >= 10", "ie >= 11"]
-                                }
-                            }]
-                        ],
-                        "plugins": ["transform-object-rest-spread"]
-                    }
                 },
                 {
                     enforce: "pre",

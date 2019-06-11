@@ -44,7 +44,7 @@ export class ToolTip extends React.Component<ToolTipProps, ToolTipState> {
         )
     }
 
-    protected renderForm: React.SFC<undefined> = (): JSX.Element => {
+    protected renderForm: React.SFC<{}> = (): JSX.Element => {
         if (!this.state.isOpen) {
             return null;
         }

@@ -1,0 +1,10 @@
+{
+  "presets": [
+    ["babel-preset-env", {
+      "targets": {
+        "browsers": ["> 2%", "safari >= 10", "ie >= 11"]
+      },
+      "plugins": ["transform-object-rest-spread"]
+    }]
+  ]
+}

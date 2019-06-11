@@ -34,7 +34,7 @@ export class SettingsTreeView extends React.Component<SettingsTreeViewProps> {
         );
     }
 
-    protected TreeItems: React.SFC<undefined> = (): JSX.Element => {
+    protected TreeItems: React.SFC<{}> = (): JSX.Element => {
         const list = this.props.childList.arrayList.map((item: TableColumn, index: number) => {
             const isEmpty = item.childColumnsArray.length;
             return (

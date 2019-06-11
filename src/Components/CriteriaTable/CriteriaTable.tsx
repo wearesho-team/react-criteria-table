@@ -199,11 +199,19 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
             return this.context.onError(error);
         }
 
-        this.setState(({ pageSize }) => ({
-            pages: Math.ceil(response && response.data.count / pageSize),
-            cancelToken: undefined,
-            data: response.data
-        }));
+        this.setState(({ pageSize, page }) => {
+            const pages = Math.ceil(response && response.data.count / pageSize);
+            if (page > pages) {
+                page = 0;
+            }
+
+            return {
+                pages: Math.ceil(response && response.data.count / pageSize),
+                page,
+                cancelToken: undefined,
+                data: response.data
+            };
+        });
 
         this.saveData();
     }
@@ -227,10 +235,10 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
 
         // replace values in exist queries
         const oldQueries = this.state.queries
-            .filter((condition) => !newQueries.some((stateCondition) => stateCondition[1] === condition[1]));
+            .filter((condition) => !newQueries.some((stateCondition) => stateCondition[ 1 ] === condition[ 1 ]));
 
         // remove queries with empty values
-        newQueries = newQueries.filter((condition) => condition[2].toString().length);
+        newQueries = newQueries.filter((condition) => condition[ 2 ].toString().length);
 
         this.state.queries = [
             ...newQueries,
@@ -269,7 +277,7 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
             "pages",
             "page",
             "data"
-        ].forEach((key) => defaultFields[key] = this.props[key]);
+        ].forEach((key) => defaultFields[ key ] = this.props[ key ]);
 
         return {
             ...defaultFields,
@@ -289,7 +297,7 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
             "nextText",
             "rowsText",
             "ofText"
-        ].forEach((key) => defaultFields[key] = this.props[key]);
+        ].forEach((key) => defaultFields[ key ] = this.props[ key ]);
 
         return defaultFields;
     }
@@ -315,4 +323,5 @@ export class CriteriaTable extends React.Component<CriteriaTableProps, CriteriaT
         }
     }
 }
+
 // tslint:disable-next-line
