@@ -37,7 +37,7 @@
     "@types/react-sortable-hoc": "^0.6.1",
     "@types/sinon": "^2.3.3",
     "awesome-typescript-loader": "^3.2.2",
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.1",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
@@ -79,7 +79,7 @@
   "peerDependencies": {
     "react": "^16.2.0",
     "prop-types": "^15.6.0",
-    "axios": "^0.19.0"
+    "axios": "^0.21.1"
   },
   "nyc": {
     "extension": [
